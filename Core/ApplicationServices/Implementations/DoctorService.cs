@@ -5,7 +5,7 @@ using Core.Services.DomainServices;
 
 namespace Core.Services.ApplicationServices.Implementations
 {
-    public class DoctorService : IService<Doctor>
+    public class DoctorService : IService<Doctor, int>
     {
         private readonly IRepository<Doctor> _doctorRepository;
 
