@@ -17,8 +17,14 @@ namespace Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Patient>().HasKey(p => p.PatientCPR);
-            modelBuilder.Entity<Doctor>().HasKey(doctor => doctor.DoctorId);
+            modelBuilder.Entity<Patient>()
+                .HasKey(p => p.PatientCPR);
+
+            modelBuilder.Entity<Patient>()
+                .Property(p => p.PatientCPR).ValueGeneratedNever();
+            
+            modelBuilder.Entity<Doctor>()
+                .HasKey(doctor => doctor.DoctorId);
         }
     }
 }
