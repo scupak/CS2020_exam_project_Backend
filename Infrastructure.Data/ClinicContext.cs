@@ -7,7 +7,7 @@ namespace Infrastructure.Data
     public class ClinicContext: DbContext
     {
         public DbSet<Patient> patients { get; set; }
-    { 
+    
         public DbSet<Doctor> Doctors { get; set; }
 
         public ClinicContext(DbContextOptions<ClinicContext> options) : base(options)
