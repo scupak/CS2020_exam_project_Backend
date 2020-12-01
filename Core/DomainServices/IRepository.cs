@@ -4,10 +4,12 @@ namespace Core.Services.DomainServices
 {
     public interface IRepository<T>
     {
-        IEnumerable<T> GetAll();
-        T Get(long id);
-        void Add(T entity);
-        void Edit(T entity);
-        void Remove(long id);
+        public List<T> GetAll();
+        public T Get(int id);
+        public T Add(T entity);
+        public T Edit(T entity);
+        public T Remove(int id);
+        public int Count();
+
     }
 }

@@ -6,27 +6,32 @@ namespace Infrastructure.Data.Repositories
 {
     public class AppointmentRepository : IRepository<Appointment>
     {
-        public IEnumerable<Appointment> GetAll()
+        public List<Appointment> GetAll()
         {
             throw new System.NotImplementedException();
         }
 
-        public Appointment Get(long id)
+        public Appointment Get(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Add(Appointment entity)
+        public Appointment Add(Appointment entity)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Edit(Appointment entity)
+        public Appointment Edit(Appointment entity)
         {
             throw new System.NotImplementedException();
         }
 
-        public void Remove(long id)
+        public Appointment Remove(int id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public int Count()
         {
             throw new System.NotImplementedException();
         }
