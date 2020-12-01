@@ -7,9 +7,9 @@ namespace Core.Services.ApplicationServices.Implementations
 {
     public class DoctorService : IService<Doctor, int>
     {
-        private readonly IRepository<Doctor> _doctorRepository;
+        private readonly IRepository<Doctor, int> _doctorRepository;
 
-        public DoctorService(IRepository<Doctor> doctorRepository)
+        public DoctorService(IRepository<Doctor, int> doctorRepository)
         {
             _doctorRepository = doctorRepository;
         }
