@@ -8,5 +8,7 @@ namespace Core.Services.Validators.Interfaces
     public interface IPatientValidator
     {
         public void DefaultValidator(Patient patient);
+
+        public void ValidateCPR(Patient patient);
     }
 }

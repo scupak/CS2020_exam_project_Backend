@@ -47,6 +47,12 @@ namespace Core.Services.Validators.Implementations
             {
                 throw new  NullReferenceException("Patient phone number cannot be null or empty!");
             }
+
+            if (!Regex.IsMatch(patient.PatientPhone, "(^\\s?\\d{2}\\s?\\d{2}\\s?\\d{2}\\s?\\d{2})$"))
+            {
+
+                throw new InvalidDataException("Patient Phone number has to be a valid Phone number");
+            }
             
         }
 
@@ -55,6 +61,12 @@ namespace Core.Services.Validators.Implementations
             if (String.IsNullOrEmpty(patient.PatientEmail))
             {
                 throw new  NullReferenceException("Patient e-mail cannot be null or empty!");
+            }
+
+            if (!Regex.IsMatch(patient.PatientEmail, "^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,3}$"))
+            {
+
+                throw new InvalidDataException("Patient Email has to be a valid Email");
             }
             
         }

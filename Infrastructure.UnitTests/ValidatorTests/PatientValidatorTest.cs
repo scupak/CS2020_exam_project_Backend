@@ -72,13 +72,70 @@ namespace Infrastructure.UnitTests.ValidatorTests
         }
 
         [Fact]
+        public void  DefaultValidation_WithValidPhone_ShouldNotThrowException()
+        {
+            IPatientValidator validator = new PatientValidator();
+
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "23115177" , PatientEmail = "hans@hotmail.com" , PatientCPR = "150429-0677" } as Patient);
+
+            action.Should().NotThrow<Exception>();
+
+
+
+        }
+
+        [Theory]
+        [InlineData("4020405")]
+        public void  DefaultValidation_WithInvalidPhone_ShouldThrowException(string phoneNumber)
+        {
+            IPatientValidator validator = new PatientValidator();
+
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = phoneNumber} as Patient);
+
+            action.Should().Throw<InvalidDataException>().WithMessage("Patient Phone number has to be a valid Phone number");
+
+
+
+        }
+
+        [Fact]
         public void  DefaultValidation_WithNullEmail_ShouldThrowException()
         {
             IPatientValidator validator = new PatientValidator();
 
-            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "402040"} as Patient);
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050"} as Patient);
 
             action.Should().Throw<NullReferenceException>().WithMessage("Patient e-mail cannot be null or empty!");
+
+           
+
+        }
+
+        [Fact]
+        public void  DefaultValidation_WithValidEmail_ShouldNotThrowException()
+        {
+            IPatientValidator validator = new PatientValidator();
+
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com"} as Patient);
+
+            action.Should().NotThrow<InvalidDataException>();
+
+           
+
+        }
+
+        [Theory]
+        [InlineData("hanshotmail.com")]
+        [InlineData("hans@@hotmail.com")]
+        [InlineData("hanshotmai@.com")]
+        [InlineData("hans@hot")]
+        public void  DefaultValidation_WithInvalidEmail_ShouldThrowException(string email)
+        {
+            IPatientValidator validator = new PatientValidator();
+
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" ,PatientEmail = email} as Patient);
+
+            action.Should().Throw<InvalidDataException>().WithMessage("Patient Email has to be a valid Email");
 
            
 
@@ -90,7 +147,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
         {
             IPatientValidator validator = new PatientValidator();
 
-            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "402040" , PatientEmail = "hans@hotmail.com"} as Patient);
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com"} as Patient);
 
             action.Should().Throw<NullReferenceException>().WithMessage("Patient CPR cannot be null or empty!");
 
@@ -100,13 +157,13 @@ namespace Infrastructure.UnitTests.ValidatorTests
 
 
         [Fact]
-        public void  DefaultValidation_WithNormalCPRSouldThrowNoExeption()
+        public void  DefaultValidation_WithNormalCPRSouldNotThrowExeption()
         {
             IPatientValidator validator = new PatientValidator();
 
-            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "402040" , PatientEmail = "hans@hotmail.com" , PatientCPR = "150429-0677"} as Patient);
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com" , PatientCPR = "150429-0677"} as Patient);
 
-            action.Should().NotThrow<NullReferenceException>();
+            action.Should().NotThrow<InvalidDataException>();
 
            
 
@@ -117,7 +174,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
         {
             IPatientValidator validator = new PatientValidator();
 
-            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "402040" , PatientEmail = "hans@hotmail.com" ,PatientCPR = "400429-0677"} as Patient);
+            Action action = () => validator.DefaultValidator(new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com" ,PatientCPR = "400429-0677"} as Patient);
 
             action.Should().Throw<InvalidDataException>().WithMessage("Patient CPR has to be a valid CPR number");
 
