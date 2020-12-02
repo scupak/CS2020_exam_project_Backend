@@ -11,7 +11,7 @@ namespace Infrastructure.Data.Repositories
             throw new System.NotImplementedException();
         }
 
-        public Appointment Get(int id)
+        public Appointment GetById(int id)
         {
             throw new System.NotImplementedException();
         }

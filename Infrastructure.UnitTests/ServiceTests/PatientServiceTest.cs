@@ -58,7 +58,7 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             patientRepoMock
                 .Setup(repo => repo
-                    .Get(It.IsAny<string>()))
+                    .GetById(It.IsAny<string>()))
                 .Returns<string>((CPR) => allPatients
                     .ContainsKey(CPR)
                     ? allPatients[CPR]
@@ -125,11 +125,11 @@ namespace Infrastructure.UnitTests.ServiceTests
             var service = new PatientService(patientRepoMock.Object,validatorMock.Object);
 
             // act
-            var result = service.Get(c1.PatientCPR);
+            var result = service.GetById(c1.PatientCPR);
 
             // assert
             Assert.Equal(c1, result);
-            patientRepoMock.Verify(repo => repo.Get(It.Is<string>(id => id == c1.PatientCPR)), Times.Once);
+            patientRepoMock.Verify(repo => repo.GetById(It.Is<string>(id => id == c1.PatientCPR)), Times.Once);
         }
 
        #endregion

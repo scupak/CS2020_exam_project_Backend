@@ -24,7 +24,7 @@ namespace Core.Services.ApplicationServices.Implementations
             throw new NotImplementedException();
         }
 
-        public Patient Get(string id)
+        public Patient GetById(string id)
         {
             throw new NotImplementedException();
         }
