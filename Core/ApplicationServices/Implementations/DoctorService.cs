@@ -22,7 +22,7 @@ namespace Core.Services.ApplicationServices.Implementations
             throw new System.NotImplementedException();
         }
 
-        public Doctor Get(int id)
+        public Doctor GetById(int id)
         {
             throw new System.NotImplementedException();
         }
