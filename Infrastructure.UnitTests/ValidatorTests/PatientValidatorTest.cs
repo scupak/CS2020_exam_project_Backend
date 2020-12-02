@@ -86,6 +86,9 @@ namespace Infrastructure.UnitTests.ValidatorTests
 
         [Theory]
         [InlineData("4020405")]
+        [InlineData("40204055555555555")]
+        [InlineData("0000000000")]
+        [InlineData("9999999p")]
         public void  DefaultValidation_WithInvalidPhone_ShouldThrowException(string phoneNumber)
         {
             IPatientValidator validator = new PatientValidator();
