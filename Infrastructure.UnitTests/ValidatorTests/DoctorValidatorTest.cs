@@ -38,36 +38,12 @@ namespace Infrastructure.UnitTests.ValidatorTests
             action.Should().Throw<ArgumentException>().WithMessage("A doctor should not have an id");
         }
 
-        [Fact]
-        public void CreateValidation_WithDoctorHasNoFirstName_ShouldThrowException()
-        {
-            IDoctorValidator doctorValidator = new DoctorValidator();
-            Action action = () => doctorValidator.CreateValidation(new Doctor()
-            {
-                LastName = "Lumby",
-                EmailAddress = "lumby98@gmail.com",
-                PhoneNumber = "11554477",
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a first name");
-        }
-
-        [Fact]
-        public void CreateValidation_WithDoctorHasNoLastName_ShouldThrowException()
-        {
-            IDoctorValidator doctorValidator = new DoctorValidator();
-            Action action = () => doctorValidator.CreateValidation(new Doctor()
-            {
-                FirstName = "Mads",
-                EmailAddress = "lumby98@gmail.com",
-                PhoneNumber = "11554477",
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a last name");
-        }
 
         [Theory]
         [InlineData(" ")]
         [InlineData("t")]
-        public void CreateValidation_WithDoctorFirstNameMin_ShouldThrowException(string firstName)
+        [InlineData(null)]
+        public void CreateValidation_WithDoctorInvalidFirstName_ShouldThrowException(string firstName)
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.CreateValidation(new Doctor()
@@ -77,13 +53,14 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 EmailAddress = "lumby98@gmail.com",
                 PhoneNumber = "11554477",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a first name");
+            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid first name");
         }
 
         [Theory]
         [InlineData("")]
         [InlineData("t")]
-        public void CreateValidation_WithDoctorLastNameMin_ShouldThrowException(string lastName)
+        [InlineData(null)]
+        public void CreateValidation_WithDoctorInvalidLastName_ShouldThrowException(string lastName)
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.CreateValidation(new Doctor()
@@ -93,7 +70,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 EmailAddress = "lumby98@gmail.com",
                 PhoneNumber = "11554477",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a last name");
+            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid last name");
         }
 
         [Fact]
@@ -106,7 +83,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 LastName = "Lumby",
                 PhoneNumber = "11554477",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs an email");
+            action.Should().Throw<NullReferenceException>().WithMessage("a doctor needs an email");
         }
 
         [Theory]
@@ -122,9 +99,23 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 FirstName = "Mads",
                 LastName = "Lumby",
                 EmailAddress = email,
-                PhoneNumber = "11554477",
+                PhoneNumber = "23115177",
             });
             action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid email address");
+        }
+
+        [Fact]
+        public void CreateValidation_WithDoctorHasValidEmail_ShouldNotThrowException()
+        {
+            IDoctorValidator doctorValidator = new DoctorValidator();
+            Action action = () => doctorValidator.CreateValidation(new Doctor()
+            {
+                FirstName = "Mads",
+                LastName = "Lumby",
+                EmailAddress = "lumby98@gmail.com",
+                PhoneNumber = "11554477",
+            });
+            action.Should().NotThrow<Exception>();
         }
 
         [Fact]
@@ -137,13 +128,14 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 LastName = "Lumby",
                 EmailAddress = "lumby98@gmail.com",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a phone number");
+            action.Should().Throw<NullReferenceException>().WithMessage("a doctor needs a phone number");
         }
 
         [Theory]
         [InlineData("1")]
         [InlineData("")]
         [InlineData("235689562014")]
+        [InlineData("23-11-51-77")]
         public void CreateValidation_WithDoctorHasNoValidPhoneNumber_ShouldThrowException(string phoneNumber)
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
@@ -154,7 +146,23 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 EmailAddress = "lumby98@gmail.com",
                 PhoneNumber = phoneNumber
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a phone number");
+            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid phone number");
+        }
+
+        [Theory]
+        [InlineData("23115177")]
+        [InlineData("23 11 51 77")]
+        public void CreateValidation_WithDoctorHasValidPhoneNumber_ShouldNotThrowException(string phoneNumber)
+        {
+            IDoctorValidator doctorValidator = new DoctorValidator();
+            Action action = () => doctorValidator.CreateValidation(new Doctor()
+            {
+                FirstName = "Mads",
+                LastName = "Lumby",
+                EmailAddress = "lumby98@gmail.com",
+                PhoneNumber = phoneNumber
+            });
+            action.Should().NotThrow<Exception>();
         }
 
         [Fact]
@@ -168,65 +176,44 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 EmailAddress = "lumby98@gmail.com",
                 PhoneNumber = "11554477",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("A doctor should have an id");
+            action.Should().Throw<NullReferenceException>().WithMessage("A doctor should have an id");
         }
 
-        [Fact]
-        public void EditValidation_WithDoctorHasNoFirstName_ShouldThrowException()
-        {
-            IDoctorValidator doctorValidator = new DoctorValidator();
-            Action action = () => doctorValidator.EditValidation(new Doctor()
-            {
-                LastName = "Lumby",
-                EmailAddress = "lumby98@gmail.com",
-                PhoneNumber = "11554477",
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a first name");
-        }
-
-        [Fact]
-        public void EditValidation_WithDoctorHasNoLastName_ShouldThrowException()
-        {
-            IDoctorValidator doctorValidator = new DoctorValidator();
-            Action action = () => doctorValidator.EditValidation(new Doctor()
-            {
-                FirstName = "Mads",
-                EmailAddress = "lumby98@gmail.com",
-                PhoneNumber = "11554477",
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a last name");
-        }
 
         [Theory]
         [InlineData(" ")]
         [InlineData("t")]
-        public void EditValidation_WithDoctorFirstNameMin_ShouldThrowException(string firstName)
+        [InlineData(null)]
+        public void EditValidation_WithDoctorInvalidFirstName_ShouldThrowException(string firstName)
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.EditValidation(new Doctor()
             {
+                DoctorId = 1,
                 FirstName = firstName,
                 LastName = "Lumby",
                 EmailAddress = "lumby98@gmail.com",
                 PhoneNumber = "11554477",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a first name");
+            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid first name");
         }
 
         [Theory]
         [InlineData("")]
         [InlineData("t")]
-        public void EditValidation_WithDoctorLastNameMin_ShouldThrowException(string lastName)
+        [InlineData(null)]
+        public void EditValidation_WithDoctorInvalidLastName_ShouldThrowException(string lastName)
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.EditValidation(new Doctor()
             {
+                DoctorId = 1,
                 FirstName = "Mads",
                 LastName = lastName,
                 EmailAddress = "lumby98@gmail.com",
                 PhoneNumber = "11554477",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a last name");
+            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid last name");
         }
 
         [Fact]
@@ -235,11 +222,12 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.EditValidation(new Doctor()
             {
+                DoctorId = 1,
                 FirstName = "Mads",
                 LastName = "Lumby",
                 PhoneNumber = "11554477",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs an email");
+            action.Should().Throw<NullReferenceException>().WithMessage("a doctor needs an email");
         }
 
         [Theory]
@@ -252,6 +240,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.EditValidation(new Doctor()
             {
+                DoctorId = 1,
                 FirstName = "Mads",
                 LastName = "Lumby",
                 EmailAddress = email,
@@ -266,11 +255,12 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.EditValidation(new Doctor()
             {
+                DoctorId = 1,
                 FirstName = "Mads",
                 LastName = "Lumby",
                 EmailAddress = "lumby98@gmail.com",
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a phone number");
+            action.Should().Throw<NullReferenceException>().WithMessage("a doctor needs a phone number");
         }
 
         [Theory]
@@ -282,12 +272,13 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IDoctorValidator doctorValidator = new DoctorValidator();
             Action action = () => doctorValidator.EditValidation(new Doctor()
             {
+                DoctorId = 1,
                 FirstName = "Mads",
                 LastName = "Lumby",
                 EmailAddress = "lumby98@gmail.com",
                 PhoneNumber = phoneNumber
             });
-            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a phone number");
+            action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid phone number");
         }
 
         [Fact]
@@ -297,5 +288,6 @@ namespace Infrastructure.UnitTests.ValidatorTests
             Action action = () => doctorValidator.IdValidation(0);
             action.Should().Throw<ArgumentException>().WithMessage("id cannot be lower than 1");
         }
+
     }
 }
