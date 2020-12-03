@@ -46,7 +46,8 @@ namespace Infrastructure.UnitTests.ServiceTests
                     .Remove(It
                         .IsAny<int>()))
                 .Callback<int>(id => _allDoctors.Remove(id))
-                .Returns<Doctor>(doctor => _allDoctors[doctor.DoctorId]);
+                .Returns<int>((id) => _allDoctors
+                    .ContainsKey(id) ? _allDoctors[id] : null);
 
             _doctorRepoMock
                 .Setup(repo => repo
@@ -156,7 +157,7 @@ namespace Infrastructure.UnitTests.ServiceTests
             Action action = () => service.GetById(d1.DoctorId);
 
             // assert
-            action.Should().Throw<KeyNotFoundException>().WithMessage("Id does not exist");
+            action.Should().Throw<KeyNotFoundException>().WithMessage("Doctor does not exist");
             
             _doctorRepoMock.Verify(repo => repo
                 .GetById(It.Is<int>(id => id == d1.DoctorId)), Times.Once);

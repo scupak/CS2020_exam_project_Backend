@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core.Entities.Entities.BE;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
@@ -19,27 +21,87 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public List<Doctor> GetAll()
         {
-            throw new System.NotImplementedException();
+            return _doctorRepository.GetAll();
         }
 
         public Doctor GetById(int id)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                _doctorValidator.IdValidation(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Id validation failed", ex);
+            }
+
+            Doctor doctor = _doctorRepository.GetById(id);
+
+            if (doctor == null)
+            {
+                throw new KeyNotFoundException("Doctor does not exist");
+            }
+
+            return doctor;
+
         }
 
         public Doctor Add(Doctor entity)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                _doctorValidator.CreateValidation(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Validation failed", ex);
+            }
+
+            Doctor doctor = _doctorRepository.Add(entity);
+            return doctor;
+
         }
 
         public Doctor Edit(Doctor entity)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                _doctorValidator.EditValidation(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Validation failed", ex);
+            }
+
+            if (_doctorRepository.GetById(entity.DoctorId) == null)
+            {
+                throw new ArgumentException("A doctor with this id does not exist");
+            }
+
+            Doctor doctor = _doctorRepository.Edit(entity);
+            return doctor;
+
         }
 
         public Doctor Remove(int id)
         {
-            throw new System.NotImplementedException();
+            try
+            {
+                _doctorValidator.IdValidation(id);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Validation failed", ex);
+            }
+
+            if (_doctorRepository.GetById(id) == null)
+            {
+                throw new KeyNotFoundException("This doctor does not exist");
+            }
+
+            Doctor doctor = _doctorRepository.Remove(id);
+            return doctor;
+
         }
     }
 }
