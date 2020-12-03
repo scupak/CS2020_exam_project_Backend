@@ -9,6 +9,6 @@ namespace Core.Services.Validators.Interfaces
     {
         public void DefaultValidator(Patient patient);
 
-        public void ValidateCPR(Patient patient);
+        public void ValidateCPR(string CPR);
     }
 }

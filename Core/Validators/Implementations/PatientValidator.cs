@@ -71,7 +71,7 @@ namespace Core.Services.Validators.Implementations
             
         }
 
-        public void ValidateCPR(Patient patient)
+        void ValidateCPR(Patient patient)
         {
             if (String.IsNullOrEmpty(patient.PatientCPR))
             {
@@ -79,6 +79,22 @@ namespace Core.Services.Validators.Implementations
             }
 
             if (!Regex.IsMatch(patient.PatientCPR, "^((((0[1-9]|[12][0-9]|3[01])(0[13578]|10|12)(\\d{2}))|(([0][1-9]|[12][0-9]|30)(0[469]|11)(\\d{2}))|((0[1-9]|1[0-9]|2[0-8])(02)(\\d{2}))|((29)(02)(00))|((29)(02)([2468][048]))|((29)(02)([13579][26])))[-]\\d{4})$"))
+            {
+
+                throw new InvalidDataException("Patient CPR has to be a valid CPR number");
+            }
+
+
+
+        }
+        public void ValidateCPR(string CPR)
+        {
+            if (String.IsNullOrEmpty(CPR))
+            {
+                throw new NullReferenceException("Patient CPR cannot be null or empty!");
+            }
+
+            if (!Regex.IsMatch(CPR, "^((((0[1-9]|[12][0-9]|3[01])(0[13578]|10|12)(\\d{2}))|(([0][1-9]|[12][0-9]|30)(0[469]|11)(\\d{2}))|((0[1-9]|1[0-9]|2[0-8])(02)(\\d{2}))|((29)(02)(00))|((29)(02)([2468][048]))|((29)(02)([13579][26])))[-]\\d{4})$"))
             {
 
                 throw new InvalidDataException("Patient CPR has to be a valid CPR number");

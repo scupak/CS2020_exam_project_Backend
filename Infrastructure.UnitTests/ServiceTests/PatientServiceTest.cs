@@ -48,8 +48,9 @@ namespace Infrastructure.UnitTests.ServiceTests
                 .Setup(repo => repo
                     .Remove(It
                         .IsAny<string>()))
-                .Callback<string>(CPR => allPatients.Remove(CPR))
-                .Returns<Patient>(patient => allPatients[patient.PatientCPR]);
+                .Callback<string>(id => allPatients.Remove(id))
+                .Returns<string>((id) => allPatients
+                    .ContainsKey(id) ? allPatients[id] : null);
 
             patientRepoMock
                 .Setup(repo => repo
@@ -132,12 +133,29 @@ namespace Infrastructure.UnitTests.ServiceTests
             patientRepoMock.Verify(repo => repo.GetById(It.Is<string>(id => id == c1.PatientCPR)), Times.Once);
         }
 
-       #endregion
+        [Fact]
+        public void GetPatientByIdShouldCallPatientValidatorCPRValidatorWithCPRParam_Once()
+        {
+            // arrange
+
+            // company c1 exists in the Company repository
+            var c1 = new Patient() { PatientCPR = "011200-4106" };
+            allPatients.Add(c1.PatientCPR, c1);
+
+            var service = new PatientService(patientRepoMock.Object, validatorMock.Object);
+
+            // act
+            var result = service.GetById(c1.PatientCPR);
+
+            validatorMock.Verify(validator => validator.ValidateCPR(c1.PatientCPR), Times.Once);
+        }
+
+        #endregion
 
 
-       #region Add
+        #region Add
 
-       [Theory]
+        [Theory]
        [InlineData("011200-4106" ,"mike" , "mikeowsky", "mike@hotmail.com" , "40506090" )]
        public void AddPatient_ValidPatient(string PatientCPR ,string FirstName , string Lastname , string Email , string phone)
        {
@@ -203,6 +221,7 @@ namespace Infrastructure.UnitTests.ServiceTests
        {
            IService<Patient, string> service = new PatientService(patientRepoMock.Object,validatorMock.Object);
            var patient = new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com" , PatientCPR = "150429-0677"};
+           allPatients.Add(patient.PatientCPR,patient);
            service.Edit(patient);
            validatorMock.Verify(validator => validator.DefaultValidator(patient), Times.Once);
 
@@ -271,12 +290,68 @@ namespace Infrastructure.UnitTests.ServiceTests
 
            Action action = () => service.Edit(Patient);
 
-           action.Should().Throw<KeyNotFoundException>().WithMessage("Patient is not in the database");
+           action.Should().Throw<ArgumentException>().WithMessage("Patient is not in the database");
 
        }
 
 
 
-       #endregion
+        #endregion
+
+        #region RemovePatientById
+        [Fact]
+        public void RemovePatientById()
+        {
+            // arrange
+
+            // company c1 exists in the Company repository
+            var c1 = new Patient() { PatientCPR = "011200-4106" };
+            allPatients.Add(c1.PatientCPR, c1);
+
+            var service = new PatientService(patientRepoMock.Object, validatorMock.Object);
+
+            // act
+            var result = service.Remove(c1.PatientCPR);
+
+            validatorMock.Verify(validator => validator.ValidateCPR(c1.PatientCPR), Times.Once);
+        }
+
+        [Fact]
+        public void RemovePatientById_VerifyRemoved()
+        {
+            // arrange
+            
+
+            // company c1 exists in the Company repository
+            var c1 = new Patient() { PatientCPR = "011200-4106" };
+            allPatients.Add(c1.PatientCPR, c1);
+
+            var service = new PatientService(patientRepoMock.Object, validatorMock.Object);
+
+            // act
+            var result = service.Remove(c1.PatientCPR);
+
+            Assert.Null(patientRepoMock.Object.GetById(c1.PatientCPR));
+            patientRepoMock.Verify(repo => repo.Remove(It.Is<string>(c => c == c1.PatientCPR )),Times.Once());
+
+        }
+
+        [Fact]
+        public void RemoveNonexistantPatient_ShouldThrowException()
+        {
+            // arrange
+
+            // company c1 exists in the Company repository
+            var c1 = new Patient() { PatientCPR = "011200-4106" };
+
+            var service = new PatientService(patientRepoMock.Object, validatorMock.Object);
+
+            // act
+            Action action = () => service.Remove(c1.PatientCPR);
+
+            action.Should().Throw<ArgumentException>().WithMessage("Nonexistant patient cannot be removed!");
+        }
+
+        #endregion
     }
 }
