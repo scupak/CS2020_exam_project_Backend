@@ -170,7 +170,130 @@ namespace Infrastructure.UnitTests.ServiceTests
 
         #region Add
 
-        
+        [Theory]
+        [InlineData(1, "Karl", "Mason", "doctor@gmail.com", "23115177", true)]
+        [InlineData(4, "Peter", "Holt", "Porter@hotmail.dk", "12345678", false)]
+        [InlineData(10, "Sandra", "Bullock", "SB@Yahoo.uk", "09876543", null)]
+        public void Add_WithValidDoctor_shouldNotThrowException(int id, string firstname, string lastname, string emailAddress, string phoneNumber, bool isAdmin)
+        {
+            // arrange
+            var d1 = new Doctor() { DoctorId = id, EmailAddress = emailAddress, FirstName = firstname, LastName = lastname, PhoneNumber = phoneNumber, IsAdmin = isAdmin};
+
+            var service = new DoctorService(_doctorRepoMock.Object, _doctorValidatorMock.Object);
+
+            // act
+            Action action = () => service.Add(d1);
+            // assert
+            action.Should().NotThrow<Exception>();
+            Assert.Contains(d1, _allDoctors.Values);
+
+            _doctorRepoMock.Verify(repo => repo
+                .Add(It.Is<Doctor>(doctor => doctor == d1)), Times.Once);
+
+            _doctorValidatorMock.Verify(validator => validator
+                .CreateValidation(It.Is<Doctor>(doctor => doctor == d1)), Times.Once);
+        }
+
+        #endregion
+
+        #region Edit
+
+        [Theory]
+        [InlineData(1, "Karl", "Mason", "doctor@gmail.com", "23115177", true)]
+        [InlineData(4, "Peter", "Holt", "Porter@hotmail.dk", "12345678", false)]
+        [InlineData(10, "Sandra", "Bullock", "SB@Yahoo.uk", "09876543", null)]
+        public void Edit_WithValidDoctor_shouldNotThrowException(int id, string firstname, string lastname, string emailAddress, string phoneNumber, bool isAdmin)
+        {
+            // arrange
+            var dNew = new Doctor() { DoctorId = id, EmailAddress = emailAddress, FirstName = firstname, LastName = lastname, PhoneNumber = phoneNumber, IsAdmin = isAdmin };
+            var dOld = new Doctor() { DoctorId = id, EmailAddress = "email@gmail.com", FirstName = "doctor", LastName = "doctor", PhoneNumber = "22222222", IsAdmin = false };
+
+            _allDoctors.Add(dOld.DoctorId, dOld);
+
+            var service = new DoctorService(_doctorRepoMock.Object, _doctorValidatorMock.Object);
+
+            // act
+            Action action = () => service.Edit(dNew);
+            // assert
+            action.Should().NotThrow<Exception>();
+            Assert.Equal(_doctorRepoMock.Object.GetById(dNew.DoctorId), dNew);
+
+            _doctorRepoMock.Verify(repo => repo
+                .Edit(It.Is<Doctor>(doctor => doctor == dNew)), Times.Once);
+
+            _doctorValidatorMock.Verify(validator => validator
+                .EditValidation(It.Is<Doctor>(doctor => doctor == dNew)), Times.Once);
+        }
+
+        [Fact]
+        public void Edit_WithInValidDoctor_shouldThrowException()
+        {
+            // arrange
+            var dOld = new Doctor() { DoctorId = 1, EmailAddress = "email@gmail.com", FirstName = "doctor", LastName = "doctor", PhoneNumber = "22222222", IsAdmin = false };
+            var dNew = new Doctor() { DoctorId = 2, EmailAddress = "email@gmail.com", FirstName = "doctor", LastName = "doctor", PhoneNumber = "22222222", IsAdmin = false };
+            _allDoctors.Add(dOld.DoctorId, dOld);
+
+            var service = new DoctorService(_doctorRepoMock.Object, _doctorValidatorMock.Object);
+
+            // act
+            Action action = () => service.Edit(dNew);
+            // assert
+            action.Should().Throw<ArgumentException>().WithMessage("A doctor with this id does not exist");
+
+            _doctorRepoMock.Verify(repo => repo
+                .Edit(It.Is<Doctor>(doctor => doctor == dNew)), Times.Never);
+
+            _doctorValidatorMock.Verify(validator => validator
+                .EditValidation(It.Is<Doctor>(doctor => doctor == dNew)), Times.Once);
+        }
+
+
+        #endregion
+
+        #region Remove
+        [Fact]
+        public void Remove_WithValidDoctor_shouldNotThrowException()
+        {
+            // arrange
+            var dOld = new Doctor() { DoctorId = 1, EmailAddress = "email@gmail.com", FirstName = "doctor", LastName = "doctor", PhoneNumber = "22222222", IsAdmin = false };
+
+            _allDoctors.Add(dOld.DoctorId, dOld);
+
+            var service = new DoctorService(_doctorRepoMock.Object, _doctorValidatorMock.Object);
+
+            // act
+            Action action = () => service.Remove(dOld.DoctorId);
+            // assert
+            action.Should().NotThrow<Exception>();
+            Assert.Null(_doctorRepoMock.Object.GetById(dOld.DoctorId));
+
+            _doctorRepoMock.Verify(repo => repo
+                .Remove(It.Is<int>(id => id == dOld.DoctorId)), Times.Once);
+
+            _doctorValidatorMock.Verify(validator => validator
+                .IdValidation(It.Is<int>(id => id == dOld.DoctorId)), Times.Once);
+        }
+
+        [Fact]
+        public void Remove_WithNonExistingDoctor_shouldThrowException()
+        {
+            // arrange
+            var dOld = new Doctor() { DoctorId = 1, EmailAddress = "email@gmail.com", FirstName = "doctor", LastName = "doctor", PhoneNumber = "22222222", IsAdmin = false };
+
+            var service = new DoctorService(_doctorRepoMock.Object, _doctorValidatorMock.Object);
+
+            // act
+            Action action = () => service.Remove(dOld.DoctorId);
+            // assert
+            action.Should().Throw<KeyNotFoundException>().WithMessage("This doctor does not exist");
+
+            _doctorRepoMock.Verify(repo => repo
+                .Remove(It.Is<int>(id => id == dOld.DoctorId)), Times.Never);
+
+            _doctorValidatorMock.Verify(validator => validator
+                .IdValidation(It.Is<int>(id => id == dOld.DoctorId)), Times.Once);
+        }
+
 
         #endregion
     }
