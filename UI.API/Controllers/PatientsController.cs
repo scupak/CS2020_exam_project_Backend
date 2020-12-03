@@ -76,15 +76,55 @@ namespace UI.API.Controllers
 
         // PUT api/<PatientsController>/5
         [HttpPut("{id}")]
-        public ActionResult<Patient> Put(int id, [FromBody] Patient patient)
+        public ActionResult<Patient> Put(String id, [FromBody] Patient patient)
         {
+            try
+            {
+
+
+                patient.PatientCPR = id;
+                Patient returnpatient = PatientService.Edit(patient);
+
+                if ( returnpatient == null)
+                {
+                    return StatusCode(404,"Could not find patient with the specified id");
+
+                }
+                else
+                {
+                    return StatusCode(202, returnpatient);
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(500, e);
+            }
 
         }
 
         // DELETE api/<PatientsController>/5
         [HttpDelete("{id}")]
-        public ActionResult<Patient> Delete(Patient patient)
+        public ActionResult<Patient> Delete(string id)
         {
+            try
+            {
+                Patient returnpatient = PatientService.Remove(id);
+                if (returnpatient == null)
+                {
+                    return StatusCode(404, "Could not find patient with the specified id");
+
+                }
+             
+
+                return StatusCode(202, returnpatient);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(404, e);
+            }
 
         }
     }
