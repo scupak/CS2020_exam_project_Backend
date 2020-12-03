@@ -6,13 +6,13 @@ namespace Core.Entities.Entities.BE
 {
     public class Patient
     {
-        public string PatientFirstName;
-        public string PatientLastName;
-        public string PatientPhone;
-        public string PatientEmail;
-        public byte[] PasswordHash;
-        public byte[] PasswordSalt;
-        public string PatientCPR;
+        public string PatientFirstName { get; set; }
+        public string PatientLastName  { get; set; }
+        public string PatientPhone    { get; set; }
+        public string PatientEmail    { get; set; }
+        public byte[] PasswordHash    { get; set; }
+        public byte[] PasswordSalt    { get; set; }
+        public string PatientCPR     { get; set; }
 
     }
 }

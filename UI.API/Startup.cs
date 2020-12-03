@@ -66,6 +66,10 @@ namespace UI.API
             services.AddScoped<IService<Doctor, int>, DoctorService>();
             services.AddScoped<IDoctorValidator, DoctorValidator>();
 
+            services.AddScoped<IRepository<Patient, string>, PatientRepository>();
+            services.AddScoped<IService<Patient, string>, PatientService>();
+            services.AddScoped<IPatientValidator, PatientValidator>();
+
             //Set a max depth for Json to prevent endless nesting
             services.AddControllers().AddNewtonsoftJson(options =>
             {

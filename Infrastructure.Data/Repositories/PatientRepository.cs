@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories
 {
-    class PatientRepository : IRepository<Patient,string>
+   public class PatientRepository : IRepository<Patient,string>
     {
         private readonly ClinicContext _ctx;
 
@@ -19,24 +19,24 @@ namespace Infrastructure.Data.Repositories
 
         public List<Patient> GetAll()
         {
-            return _ctx.patients.ToList();
+            return _ctx.Patients.ToList();
         }
 
         public Patient GetById(string id)
         {
-            return _ctx.patients.AsNoTracking().FirstOrDefault(patient => patient.PatientCPR == id);
+            return _ctx.Patients.AsNoTracking().FirstOrDefault(patient => patient.PatientCPR == id);
         }
 
         public Patient Add(Patient entity)
         {
-            var addedPatient = _ctx.patients.Add(entity);
+            var addedPatient = _ctx.Patients.Add(entity);
             _ctx.SaveChanges();
             return addedPatient.Entity;
         }
 
         public Patient Edit(Patient entity)
         {
-            var updatedPatient = _ctx.patients.Update(entity);
+            var updatedPatient = _ctx.Patients.Update(entity);
             _ctx.SaveChanges();
             return updatedPatient.Entity;
         }
@@ -51,7 +51,7 @@ namespace Infrastructure.Data.Repositories
 
         public int Count()
         {
-            return _ctx.patients.Count();
+            return _ctx.Patients.Count();
         }
     }
 }
