@@ -100,7 +100,7 @@ namespace Infrastructure.UnitTests.ServiceTests
                 allPatients.Add(p.PatientCPR, p);
             }
 
-            PatientService service = new PatientService(patientRepoMock.Object, validatorMock.Object);
+            IService<Patient, string> service = new PatientService(patientRepoMock.Object, validatorMock.Object);
 
             var result = service.GetAll();
 
@@ -141,7 +141,7 @@ namespace Infrastructure.UnitTests.ServiceTests
        [InlineData("011200-4106" ,"mike" , "mikeowsky", "mike@hotmail.com" , "40506090" )]
        public void AddPatient_ValidPatient(string PatientCPR ,string FirstName , string Lastname , string Email , string phone)
        {
-           // arragne 
+           // arrange
            var Patient = new Patient()
            {
                PatientCPR = PatientCPR, 
@@ -154,11 +154,128 @@ namespace Infrastructure.UnitTests.ServiceTests
 
            };
 
+           // act
            PatientService service = new PatientService(patientRepoMock.Object, validatorMock.Object);
 
+           service.Add(Patient);
+
+           // assert
            Assert.Contains(Patient, allPatients.Values);
            patientRepoMock.Verify(repo => repo.Add(It.Is<Patient>(c => c == Patient)), Times.Once);
        }
+
+       [Fact]
+       public void Add_ShouldCallPatientValidatorDefaultValidationWithPatientParam_Once()
+       {
+           IService<Patient, string> service = new PatientService(patientRepoMock.Object,validatorMock.Object);
+            var patient = new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com" , PatientCPR = "150429-0677"};
+            service.Add(patient);
+            validatorMock.Verify(validator => validator.DefaultValidator(patient), Times.Once);
+
+       }
+
+
+       [Fact]
+       public void Add_PatientAlreadyInTheDatabase_ShouldThrowException()
+       {
+           //arrange
+           IService<Patient, string> service = new PatientService(patientRepoMock.Object,validatorMock.Object);
+           var patient = new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com" , PatientCPR = "150429-0677"};
+           
+            allPatients.Add(patient.PatientCPR,patient);
+
+            //act + assert
+            Action action = () => service.Add(patient);
+            action.Should().Throw<InvalidDataException>().WithMessage("Patient is already in the database");
+
+
+
+       }
+
+
+       #endregion
+
+
+       #region Edit
+
+       [Fact]
+       public void Edit_ShouldCallPatientValidatorDefaultValidationWithPatientParam_Once()
+       {
+           IService<Patient, string> service = new PatientService(patientRepoMock.Object,validatorMock.Object);
+           var patient = new Patient(){PatientFirstName = "name" , PatientLastName = "lastname", PatientPhone = "40204050" , PatientEmail = "hans@hotmail.com" , PatientCPR = "150429-0677"};
+           service.Edit(patient);
+           validatorMock.Verify(validator => validator.DefaultValidator(patient), Times.Once);
+
+       }
+
+       [Theory]
+       [InlineData("011200-4106" ,"mike" , "mikeowsky", "mike@hotmail.com" , "40506090" )]
+       public void EditPatient_ValidPatientWithPatientInDatabse(string PatientCPR ,string FirstName , string Lastname , string Email , string phone)
+       {
+           // arrange
+           var PatientOld = new Patient()
+           {
+               PatientCPR = PatientCPR, 
+               PatientEmail = "jake@hotmail.com", 
+               PatientLastName = "jakeowsky", 
+               PatientPhone = "20201090", 
+               PatientFirstName = "jake"
+
+
+
+           };
+           var Patientnew = new Patient()
+           {
+               PatientCPR = PatientCPR, 
+               PatientEmail = Email, 
+               PatientLastName = Lastname, 
+               PatientPhone = phone, 
+               PatientFirstName = FirstName
+
+
+
+           };
+
+            allPatients.Add(PatientOld.PatientCPR,PatientOld);
+
+           // act
+           PatientService service = new PatientService(patientRepoMock.Object, validatorMock.Object);
+           service.Edit(Patientnew);
+
+           // assert
+           var updatedPatient = allPatients[PatientCPR];
+
+           updatedPatient.Should().Be(Patientnew);
+
+       }
+
+
+       [Fact]
+       public void EditPatient_WithPatientNotInTheDatabase_ShouldThrowException()
+       {
+           // arrange
+           var Patient = new Patient()
+           {
+               PatientCPR = "011200-4106", 
+               PatientEmail = "jake@hotmail.com", 
+               PatientLastName = "jakeowsky", 
+               PatientPhone = "20201090", 
+               PatientFirstName = "jake"
+
+
+
+           };
+
+           // act + assert
+           PatientService service = new PatientService(patientRepoMock.Object, validatorMock.Object);
+
+           Action action = () => service.Edit(Patient);
+
+           action.Should().Throw<KeyNotFoundException>().WithMessage("Patient is not in the database");
+
+       }
+
+
 
        #endregion
     }
