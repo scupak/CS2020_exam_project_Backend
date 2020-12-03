@@ -1,15 +1,9 @@
-using System;
 using Xunit;
 
-namespace Infrastructure.UnitTests
+namespace Infrastructure.UnitTests.ServiceTests
 {
-    public class UnitTest1
+    public class AppointmentServiceTest
     {
-        [Fact]
-        public void Test1()
-        {
-            //stuff
-
-        }
+        
     }
 }

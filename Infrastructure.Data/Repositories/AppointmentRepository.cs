@@ -4,14 +4,14 @@ using Core.Services.DomainServices;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class AppointmentRepository : IRepository<Appointment>
+    public class AppointmentRepository : IRepository<Appointment, int>
     {
         public List<Appointment> GetAll()
         {
             throw new System.NotImplementedException();
         }
 
-        public Appointment Get(int id)
+        public Appointment GetById(int id)
         {
             throw new System.NotImplementedException();
         }
