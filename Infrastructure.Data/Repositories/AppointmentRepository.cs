@@ -4,7 +4,7 @@ using Core.Services.DomainServices;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class AppointmentRepository : IRepository<Appointment ,int>
+    public class AppointmentRepository : IRepository<Appointment, int>
     {
         public List<Appointment> GetAll()
         {
