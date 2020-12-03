@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Data
+﻿using Core.Entities.Entities.BE;
+
+namespace Infrastructure.Data
 {
     public class DbInitializer : IDbInitializer
     {
@@ -6,6 +8,37 @@
         {
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
+
+            var doctor1 = context.Add(new Doctor()
+            {
+                FirstName = "Karl",
+                LastName = "Stevenson",
+                EmailAddress = "Karl@gmail.com",
+                PhoneNumber = "23418957"
+
+            }).Entity;
+
+            var doctor2 = context.Add(new Doctor()
+            {
+                FirstName = "Charlie",
+                LastName = "Holmes",
+                EmailAddress = "Charlie@gmail.uk",
+                PhoneNumber = "87901234",
+                IsAdmin = false
+
+            }).Entity;
+
+            var doctor3 = context.Add(new Doctor()
+            {
+                FirstName = "Anne",
+                LastName = "Gorky",
+                EmailAddress = "Anne@Yahoo.Ru",
+                PhoneNumber = "45671289",
+                IsAdmin = true
+
+            }).Entity;
+
+            context.SaveChanges();
         }
     }
 }

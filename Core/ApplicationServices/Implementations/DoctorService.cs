@@ -32,7 +32,7 @@ namespace Core.Services.ApplicationServices.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception("Id validation failed", ex);
+                throw new Exception("Id validation failed\n" + ex.Message , ex);
             }
 
             Doctor doctor = _doctorRepository.GetById(id);
@@ -54,7 +54,7 @@ namespace Core.Services.ApplicationServices.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception("Validation failed", ex);
+                throw new Exception("Validation failed\n" + ex.Message, ex);
             }
 
             Doctor doctor = _doctorRepository.Add(entity);
@@ -70,7 +70,7 @@ namespace Core.Services.ApplicationServices.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception("Validation failed", ex);
+                throw new Exception("Validation failed\n" + ex.Message, ex);
             }
 
             if (_doctorRepository.GetById(entity.DoctorId) == null)
@@ -91,7 +91,7 @@ namespace Core.Services.ApplicationServices.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception("Validation failed", ex);
+                throw new Exception("Validation failed\n" + ex.Message, ex);
             }
 
             if (_doctorRepository.GetById(id) == null)

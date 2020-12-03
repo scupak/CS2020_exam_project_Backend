@@ -4,7 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Core.Entities.Entities.BE;
+using Core.Services.ApplicationServices.Implementations;
+using Core.Services.ApplicationServices.Interfaces;
+using Core.Services.DomainServices;
+using Core.Services.Validators.Implementations;
+using Core.Services.Validators.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -55,6 +62,9 @@ namespace UI.API
             }
 
             services.AddTransient<IDbInitializer, DbInitializer>();
+            services.AddScoped<IRepository<Doctor, int>, DoctorRepository>();
+            services.AddScoped<IService<Doctor, int>, DoctorService>();
+            services.AddScoped<IDoctorValidator, DoctorValidator>();
 
             //Set a max depth for Json to prevent endless nesting
             services.AddControllers().AddNewtonsoftJson(options =>

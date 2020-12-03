@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core.Entities.Entities.BE;
+using Core.Entities.Exceptions;
 using Core.Services.DomainServices;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,47 +20,90 @@ namespace Infrastructure.Data.Repositories
 
         public List<Doctor> GetAll()
         {
-            return ctx.Doctors
-                .AsNoTracking()
-                .ToList();
+            try
+            {
+                return ctx.Doctors
+                    .AsNoTracking()
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
+            
         }
 
         public Doctor GetById(int id)
         {
-            return ctx.Doctors
-                .AsNoTracking()
-                .FirstOrDefault(doctor => doctor.DoctorId == id);
+            try
+            {
+                return ctx.Doctors
+                    .AsNoTracking()
+                    .FirstOrDefault(doctor => doctor.DoctorId == id);
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public Doctor Add(Doctor entity)
         {
-            var entry = ctx.Add(entity);
-            ctx.SaveChanges();
+            try
+            {
+                var entry = ctx.Add(entity);
+                ctx.SaveChanges();
 
-            return entry.Entity;
+                return entry.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public Doctor Edit(Doctor entity)
         {
-            var entry = ctx.Update(entity);
-            ctx.SaveChanges();
+            try
+            {
+                var entry = ctx.Update(entity);
+                ctx.SaveChanges();
 
-            return entry.Entity;
+                return entry.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public Doctor Remove(int id)
         {
-            Doctor d = new Doctor(){DoctorId = id};
+            try
+            {
+                Doctor d = new Doctor() { DoctorId = id };
 
-            var entry = ctx.Remove(d);
-            ctx.SaveChanges();
+                var entry = ctx.Remove(d);
+                ctx.SaveChanges();
 
-            return entry.Entity;
+                return entry.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public int Count()
         {
-            return ctx.Doctors.AsNoTracking().Count();
+            try
+            {
+                return ctx.Doctors.AsNoTracking().Count();
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
     }
 }

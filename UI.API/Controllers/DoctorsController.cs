@@ -7,17 +7,16 @@ using Core.Services.ApplicationServices.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace UI.API.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    public class DoctorController : ControllerBase
+    public class DoctorsController : ControllerBase
     {
         private readonly IService<Doctor, int> _doctorService;
 
-        public DoctorController(IService<Doctor, int> doctorService)
+        public DoctorsController(IService<Doctor, int> doctorService)
         {
             _doctorService = doctorService;
         }
@@ -40,7 +39,7 @@ namespace UI.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
             }
             
         }
@@ -63,7 +62,7 @@ namespace UI.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, $"Something went wrong in the service\n" + ex.Message);
             }
         }
 
@@ -85,20 +84,50 @@ namespace UI.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
             }
         }
 
-        // PUT api/<DoctorController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        /// <summary>
+        /// This method is used to update a doctor with new properties.
+        /// </summary>
+        /// <param name="doctor"></param>
+        /// <returns> An updated doctor</returns>
+        /// <response code = "200">Doctor has been updated</response>
+        /// <response code = "500">an error has occurred</response>
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<Doctor> Edit([FromBody] Doctor doctor)
         {
+            try
+            {
+                return Ok(_doctorService.Edit(doctor));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
+            }
         }
 
-        // DELETE api/<DoctorController>/5
+        /// <summary>
+        /// This method is used to remove a doctor from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns> the removed doctor</returns>
+        /// <response code = "200">The doctor has been successfully removed</response>
+        /// <response code = "500">an error has occurred</response>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult<Doctor> Remove(int id)
         {
+            try
+            {
+                return Ok(_doctorService.Remove(id));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
+            }
         }
     }
 }
