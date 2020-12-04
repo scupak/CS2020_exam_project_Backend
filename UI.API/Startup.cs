@@ -76,10 +76,17 @@ namespace UI.API
             // Configure the default CORS policy.
             services.AddCors(options =>
             {
-                options.AddPolicy(name: "CustomerAppDev",
+                options.AddPolicy(name: "ClinicBookingAppDev",
                     builder =>
                     {
                         builder.WithOrigins("http://localhost:44320", "https://localhost:44320")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+                options.AddPolicy(name: "ClinicBookingAppAllowSpecificOrigins",
+                    builder =>
+                    {
+                        builder.WithOrigins("Placeholder for azure app url", "Placeholder for azure app url")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
@@ -109,6 +116,7 @@ namespace UI.API
         {
             if (env.IsDevelopment())
             {
+                app.UseCors("ClinicBookingAppDev");
                 //Initialize the database
                 using var scope = app.ApplicationServices.CreateScope();
                 var services = scope.ServiceProvider;
@@ -118,6 +126,7 @@ namespace UI.API
             }
             else
             {
+                app.UseCors("ClinicBookingAppAllowSpecificOrigins");
                 using var scope = app.ApplicationServices.CreateScope();
                 var services = scope.ServiceProvider;
                 var dbContext = services.GetService<ClinicContext>();
@@ -142,9 +151,6 @@ namespace UI.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            // Enable CORS (after UseRouting and before UseAuthorization).
-            app.UseCors();
 
             app.UseAuthorization();
 
