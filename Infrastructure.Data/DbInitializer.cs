@@ -38,6 +38,16 @@ namespace Infrastructure.Data
 
             }).Entity;
 
+            var patient1 = context.Add(new Patient()
+            {
+                PatientCPR = "011200-4041",
+                PatientFirstName = "frank",
+                PatientLastName = "michel",
+                PatientEmail = "frank@hotmail.com",
+                PatientPhone = "45301210"
+
+            }).Entity;
+
             context.SaveChanges();
         }
     }
