@@ -83,7 +83,7 @@ namespace UI.API
                 options.AddPolicy(name: "CustomerAppDev",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:44320", "https://localhost:44320")
+                        builder.WithOrigins("http://localhost:4200" , "https://localhost:4200")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
@@ -148,7 +148,7 @@ namespace UI.API
             app.UseRouting();
 
             // Enable CORS (after UseRouting and before UseAuthorization).
-            app.UseCors();
+            app.UseCors("CustomerAppDev");
 
             app.UseAuthorization();
 
