@@ -70,12 +70,17 @@ namespace Core.Services.ApplicationServices.Implementations
 
             }
 
-            if(_patientRepository.GetById(entity.PatientCPR) == null)
+            var previousPatient = _patientRepository.GetById(entity.PatientCPR);
+
+            if (previousPatient == null)
             {
                 throw new ArgumentException("Patient is not in the database");
 
                
             }
+
+            entity.PasswordHash = previousPatient.PasswordHash;
+            entity.PasswordSalt = previousPatient.PasswordSalt;
 
             return _patientRepository.Edit(entity);
         }

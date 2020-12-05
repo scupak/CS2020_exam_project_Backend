@@ -73,10 +73,15 @@ namespace Core.Services.ApplicationServices.Implementations
                 throw new Exception("Validation failed\n" + ex.Message, ex);
             }
 
-            if (_doctorRepository.GetById(entity.DoctorId) == null)
+            var previousDoctor = _doctorRepository.GetById(entity.DoctorId);
+
+            if (previousDoctor == null)
             {
                 throw new ArgumentException("A doctor with this id does not exist");
             }
+
+            entity.PasswordHash = previousDoctor.PasswordHash;
+            entity.PasswordSalt = previousDoctor.PasswordSalt;
 
             Doctor doctor = _doctorRepository.Edit(entity);
             return doctor;
