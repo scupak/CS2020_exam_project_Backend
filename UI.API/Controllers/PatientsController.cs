@@ -75,14 +75,14 @@ namespace UI.API.Controllers
         }
 
         // PUT api/<PatientsController>/5
-        [HttpPut("{id}")]
-        public ActionResult<Patient> Put(String id, [FromBody] Patient patient)
+        [HttpPut]
+        public ActionResult<Patient> Put( [FromBody] Patient patient)
         {
             try
             {
 
 
-                patient.PatientCPR = id;
+                
                 Patient returnpatient = PatientService.Edit(patient);
 
                 if ( returnpatient == null)
