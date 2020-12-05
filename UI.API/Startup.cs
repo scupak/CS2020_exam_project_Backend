@@ -83,7 +83,7 @@ namespace UI.API
                 options.AddPolicy(name: "ClinicBookingAppDev",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:44320", "https://localhost:44320")
+                        builder.WithOrigins("http://localhost:4200", "https://localhost:4200")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
