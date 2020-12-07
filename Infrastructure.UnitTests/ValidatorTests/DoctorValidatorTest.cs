@@ -16,41 +16,25 @@ namespace Infrastructure.UnitTests.ValidatorTests
         }
 
         [Fact]
-        public void CreateValidation_WithDoctorThatsNull_ShouldThrowException()
+        public void DefaultValidator_WithDoctorThatsNull_ShouldThrowException()
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
-            Action action = () => doctorValidator.CreateValidation(null as Doctor);
+            Action action = () => doctorValidator.DefaultValidator(null as Doctor);
             action.Should().Throw<NullReferenceException>().WithMessage("Doctor cannot be null");
         }
-
-        [Fact]
-        public void CreateValidation_WithDoctorHasAnId_ShouldThrowException()
-        {
-            IDoctorValidator doctorValidator = new DoctorValidator();
-            Action action = () => doctorValidator.CreateValidation(new Doctor()
-            {
-                DoctorId = 1,
-                FirstName = "Mads",
-                LastName = "Lumby",
-                EmailAddress = "lumby98@gmail.com",
-                PhoneNumber = "11554477",
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("A doctor should not have an id");
-        }
-
 
         [Theory]
         [InlineData(" ")]
         [InlineData("t")]
         [InlineData(null)]
-        public void CreateValidation_WithDoctorInvalidFirstName_ShouldThrowException(string firstName)
+        public void DefaultValidator_WithDoctorInvalidFirstName_ShouldThrowException(string firstName)
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
-            Action action = () => doctorValidator.CreateValidation(new Doctor()
+            Action action = () => doctorValidator.DefaultValidator(new Doctor()
             {
                 FirstName = firstName,
                 LastName = "Lumby",
-                EmailAddress = "lumby98@gmail.com",
+                DoctorEmailAddress = "lumby98@gmail.com",
                 PhoneNumber = "11554477",
             });
             action.Should().Throw<ArgumentException>().WithMessage("a doctor needs a valid first name");

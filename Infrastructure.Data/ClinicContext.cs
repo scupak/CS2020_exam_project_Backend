@@ -10,6 +10,8 @@ namespace Infrastructure.Data
     
         public DbSet<Doctor> Doctors { get; set; }
 
+        public DbSet<Appointment> Appointments { get; set; }
+
         public ClinicContext(DbContextOptions<ClinicContext> options) : base(options)
         {
 
@@ -17,14 +19,34 @@ namespace Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Patient>()
-                .HasKey(p => p.PatientCPR);
+            modelBuilder.Entity<Appointment>()
+                .HasKey(appointment => appointment.AppointmentId);
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne<Doctor>(appointment => appointment.Doctor)
+                .WithMany(doctor => doctor.Appointments)
+                .HasForeignKey(appointment => appointment.DoctorEmailAddress)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne<Patient>(appointment => appointment.Patient)
+                .WithMany(patient => patient.Appointments)
+                .HasForeignKey(appointment => appointment.PatientCpr)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Patient>()
-                .Property(p => p.PatientCPR).ValueGeneratedNever();
+                .HasKey(patient => patient.PatientCPR);
+
+            modelBuilder.Entity<Patient>()
+                .Property(patient => patient.PatientCPR).ValueGeneratedNever();
             
             modelBuilder.Entity<Doctor>()
-                .HasKey(doctor => doctor.DoctorId);
+                .HasKey(doctor => doctor.EmailAddress);
+
+            modelBuilder.Entity<Doctor>()
+                .Property(doctor => doctor.EmailAddress).ValueGeneratedNever();
         }
     }
 }

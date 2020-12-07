@@ -27,17 +27,30 @@ namespace Infrastructure.UnitTests.ValidatorTests
         }
 
         [Fact]
+        public void CreateValidation_withValidAppointment_ShouldNotThrowException()
+        {
+            IAppointmentValidator appointmentValidator = new AppointmentValidator();
+            Action action = () => appointmentValidator.CreateValidation(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(1),
+                Description = "my knee hurt",
+                DurationInMin = 15
+            });
+
+            action.Should().NotThrow<Exception>();
+        }
+
+
+        [Fact]
         public void CreateValidation_withAppointmentHasAnId_ShouldThrowException()
         {
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.CreateValidation(new Appointment()
             {
                 AppointmentId = 1,
-                AppointmentDateTime = DateTime.Now,
+                AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description = "my knee hurt",
-                DoctorId = 1,
-                DurationInMin = 15,
-                PatientCpr = "150498-5522"
+                DurationInMin = 15
             });
 
             action.Should().Throw<ArgumentException>().WithMessage("An appointment should not have an id");
@@ -50,39 +63,9 @@ namespace Infrastructure.UnitTests.ValidatorTests
             Action action = () => appointmentValidator.CreateValidation(new Appointment()
             {
                 Description = "my knee hurt",
-                DoctorId = 1,
-                DurationInMin = 15,
-                PatientCpr = "150498-5522"
+                DurationInMin = 15
             });
             action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a dateTime");
-        }
-
-        [Fact]
-        public void CreateValidation_AppointmentWIthNoDescription_ShouldThrowException()
-        {
-            IAppointmentValidator appointmentValidator = new AppointmentValidator();
-            Action action = () => appointmentValidator.CreateValidation(new Appointment()
-            {
-                AppointmentDateTime = DateTime.Now,
-                DoctorId = 1,
-                DurationInMin = 15,
-                PatientCpr = "150498-5522"
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a description");
-        }
-
-        [Fact]
-        public void CreateValidation_AppointmentWithNoDoctorId_ShouldThrowException()
-        {
-            IAppointmentValidator appointmentValidator = new AppointmentValidator();
-            Action action = () => appointmentValidator.CreateValidation(new Appointment()
-            {
-                AppointmentDateTime = DateTime.Now,
-                Description = "my knee hurt",
-                DurationInMin = 15,
-                PatientCpr = "150498-5522"
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a doctor");
         }
 
         [Fact]
@@ -91,26 +74,10 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.CreateValidation(new Appointment()
             {
-                AppointmentDateTime = DateTime.Now,
-                Description = "my knee hurt",
-                DoctorId = 1,
-                PatientCpr = "150498-5522"
+                AppointmentDateTime = DateTime.Now.AddDays(1),
+                Description = "my knee hurt"
             });
             action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a duration");
-        }
-
-        [Fact]
-        public void CreateValidation_AppointmentWIthNoPatient_ShouldThrowException()
-        {
-            IAppointmentValidator appointmentValidator = new AppointmentValidator();
-            Action action = () => appointmentValidator.CreateValidation(new Appointment()
-            {
-                AppointmentDateTime = DateTime.Now,
-                Description = "my knee hurt",
-                DoctorId = 1,
-                DurationInMin = 15
-            });
-            action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a patient");
         }
 
         [Fact]
@@ -119,16 +86,42 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.CreateValidation(new Appointment()
             {
-                AppointmentDateTime = DateTime.Now,
+                AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description =
                     "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello" +
                     "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello" +
                     "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohelloh",
-                DoctorId = 1,
-                DurationInMin = 15,
-                PatientCpr = "150498-5522"
+                DurationInMin = 15
             });
             action.Should().Throw<ArgumentException>().WithMessage("description is to long");
+        }
+
+        [Fact]
+        public void CreationValidation_AppointmentExpiredDate_shouldThrowException()
+        {
+            IAppointmentValidator appointmentValidator = new AppointmentValidator();
+            Action action = () => appointmentValidator.CreateValidation(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(-1),
+                Description = "my knee hurt",
+                DurationInMin = 15
+            });
+            action.Should().Throw<ArgumentException>().WithMessage("The date it invalid, you cant set an appointment in the past");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void CreationValidation_AppointmentNegativeDuration_shouldThrowException(int duration)
+        {
+            IAppointmentValidator appointmentValidator = new AppointmentValidator();
+            Action action = () => appointmentValidator.CreateValidation(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(1),
+                Description = "my knee hurt",
+                DurationInMin = 0
+            });
+            action.Should().Throw<ArgumentException>().WithMessage("The date it invalid, you cant set an appointment in the past");
         }
 
 
