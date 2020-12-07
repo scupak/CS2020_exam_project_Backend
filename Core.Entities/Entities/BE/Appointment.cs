@@ -9,7 +9,7 @@ namespace Core.Entities.Entities.BE
         public DateTime AppointmentDateTime { get; set; }
         public int DurationInMin { get; set; }
         public string Description { get; set; }
-        public int PatientCPR { get; set; }
+        public string PatientCpr { get; set; }
         public int DoctorId { get; set; }
     }
 }

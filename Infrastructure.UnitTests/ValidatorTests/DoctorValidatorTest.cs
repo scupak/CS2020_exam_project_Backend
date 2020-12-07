@@ -166,6 +166,15 @@ namespace Infrastructure.UnitTests.ValidatorTests
         }
 
         [Fact]
+        public void EditValidation_WithDoctorThatsNull_ShouldThrowException()
+        {
+            IDoctorValidator doctorValidator = new DoctorValidator();
+            Action action = () => doctorValidator.EditValidation(null as Doctor);
+            action.Should().Throw<NullReferenceException>().WithMessage("Doctor cannot be null");
+        }
+
+
+        [Fact]
         public void EditValidation_WithDoctorHasNoId_ShouldThrowException()
         {
             IDoctorValidator doctorValidator = new DoctorValidator();
