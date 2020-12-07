@@ -13,7 +13,7 @@ namespace Infrastructure.Data
             {
                 FirstName = "Karl",
                 LastName = "Stevenson",
-                EmailAddress = "Karl@gmail.com",
+                DoctorEmailAddress= "Karl@gmail.com",
                 PhoneNumber = "23418957"
 
             }).Entity;
@@ -22,7 +22,7 @@ namespace Infrastructure.Data
             {
                 FirstName = "Charlie",
                 LastName = "Holmes",
-                EmailAddress = "Charlie@gmail.uk",
+                DoctorEmailAddress = "Charlie@gmail.uk",
                 PhoneNumber = "87901234",
                 IsAdmin = false
 
@@ -32,7 +32,7 @@ namespace Infrastructure.Data
             {
                 FirstName = "Anne",
                 LastName = "Gorky",
-                EmailAddress = "Anne@Yahoo.Ru",
+                DoctorEmailAddress = "Anne@Yahoo.Ru",
                 PhoneNumber = "45671289",
                 IsAdmin = true
 

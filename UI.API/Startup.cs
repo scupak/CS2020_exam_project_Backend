@@ -62,8 +62,8 @@ namespace UI.API
             }
 
             services.AddTransient<IDbInitializer, DbInitializer>();
-            services.AddScoped<IRepository<Doctor, int>, DoctorRepository>();
-            services.AddScoped<IService<Doctor, int>, DoctorService>();
+            services.AddScoped<IRepository<Doctor, string>, DoctorRepository>();
+            services.AddScoped<IService<Doctor, string>, DoctorService>();
             services.AddScoped<IDoctorValidator, DoctorValidator>();
 
             services.AddScoped<IRepository<Patient, string>, PatientRepository>();

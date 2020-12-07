@@ -43,10 +43,10 @@ namespace Infrastructure.Data
                 .Property(patient => patient.PatientCPR).ValueGeneratedNever();
             
             modelBuilder.Entity<Doctor>()
-                .HasKey(doctor => doctor.EmailAddress);
+                .HasKey(doctor => doctor.DoctorEmailAddress);
 
             modelBuilder.Entity<Doctor>()
-                .Property(doctor => doctor.EmailAddress).ValueGeneratedNever();
+                .Property(doctor => doctor.DoctorEmailAddress).ValueGeneratedNever();
         }
     }
 }

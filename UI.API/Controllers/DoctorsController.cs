@@ -14,9 +14,9 @@ namespace UI.API.Controllers
     [ApiController]
     public class DoctorsController : ControllerBase
     {
-        private readonly IService<Doctor, int> _doctorService;
+        private readonly IService<Doctor, string> _doctorService;
 
-        public DoctorsController(IService<Doctor, int> doctorService)
+        public DoctorsController(IService<Doctor, string> doctorService)
         {
             _doctorService = doctorService;
         }
@@ -45,24 +45,24 @@ namespace UI.API.Controllers
         }
 
         /// <summary>
-        /// Returns a doctor with a specified id
+        /// Returns a doctor with a specified email
         /// </summary>
         /// <returns>doctor</returns>
-        /// <param name="id"> int</param>
+        /// <param name="email"> string</param>
         /// <response code = "200">Returns a doctor</response>
         /// <response code = "500">an error has occurred</response>
-        [HttpGet("{id}")]
+        [HttpGet("{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Doctor> GetByID(int id)
+        public ActionResult<Doctor> GetById(string email)
         {
             try
             {
-                return Ok(_doctorService.GetById(id));
+                return Ok(_doctorService.GetById(email));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Something went wrong in the service\n" + ex.Message);
+                return StatusCode(500, $"Something went wrong in the service \n" + ex.Message);
             }
         }
 
@@ -113,16 +113,16 @@ namespace UI.API.Controllers
         /// <summary>
         /// This method is used to remove a doctor from the database
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="email">string</param>
         /// <returns> the removed doctor</returns>
         /// <response code = "200">The doctor has been successfully removed</response>
         /// <response code = "500">an error has occurred</response>
-        [HttpDelete("{id}")]
-        public ActionResult<Doctor> Remove(int id)
+        [HttpDelete("{email}")]
+        public ActionResult<Doctor> Remove(string email)
         {
             try
             {
-                return Ok(_doctorService.Remove(id));
+                return Ok(_doctorService.Remove(email));
             }
             catch (Exception ex)
             {

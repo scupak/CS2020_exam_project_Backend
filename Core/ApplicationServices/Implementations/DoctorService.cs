@@ -8,12 +8,12 @@ using Core.Services.Validators.Interfaces;
 
 namespace Core.Services.ApplicationServices.Implementations
 {
-    public class DoctorService : IService<Doctor, int>
+    public class DoctorService : IService<Doctor, string>
     {
-        private readonly IRepository<Doctor, int> _doctorRepository;
+        private readonly IRepository<Doctor, string> _doctorRepository;
         private readonly IDoctorValidator _doctorValidator;
 
-        public DoctorService(IRepository<Doctor, int> doctorRepository, IDoctorValidator doctorValidator)
+        public DoctorService(IRepository<Doctor, string> doctorRepository, IDoctorValidator doctorValidator)
         {
             _doctorRepository = doctorRepository;
             _doctorValidator = doctorValidator;
@@ -24,18 +24,18 @@ namespace Core.Services.ApplicationServices.Implementations
             return _doctorRepository.GetAll();
         }
 
-        public Doctor GetById(int id)
+        public Doctor GetById(string email)
         {
             try
             {
-                _doctorValidator.IdValidation(id);
+                _doctorValidator.ValidateEmail(email);
             }
             catch (Exception ex)
             {
-                throw new Exception("Id validation failed\n" + ex.Message , ex);
+                throw new Exception("email validation failed\n" + ex.Message , ex);
             }
 
-            Doctor doctor = _doctorRepository.GetById(id);
+            Doctor doctor = _doctorRepository.GetById(email);
 
             if (doctor == null)
             {
@@ -50,11 +50,18 @@ namespace Core.Services.ApplicationServices.Implementations
         {
             try
             {
-                _doctorValidator.CreateValidation(entity);
+                _doctorValidator.DefaultValidator(entity);
             }
             catch (Exception ex)
             {
                 throw new Exception("Validation failed\n" + ex.Message, ex);
+            }
+
+            var previousDoctor = _doctorRepository.GetById(entity.DoctorEmailAddress);
+
+            if (previousDoctor != null)
+            {
+                throw new ArgumentException("A doctor with this email already exists");
             }
 
             Doctor doctor = _doctorRepository.Add(entity);
@@ -66,18 +73,18 @@ namespace Core.Services.ApplicationServices.Implementations
         {
             try
             {
-                _doctorValidator.EditValidation(entity);
+                _doctorValidator.DefaultValidator(entity);
             }
             catch (Exception ex)
             {
                 throw new Exception("Validation failed\n" + ex.Message, ex);
             }
 
-            var previousDoctor = _doctorRepository.GetById(entity.DoctorId);
+            var previousDoctor = _doctorRepository.GetById(entity.DoctorEmailAddress);
 
             if (previousDoctor == null)
             {
-                throw new ArgumentException("A doctor with this id does not exist");
+                throw new ArgumentException("A doctor with this email does not exist");
             }
 
             entity.PasswordHash = previousDoctor.PasswordHash;
@@ -88,23 +95,23 @@ namespace Core.Services.ApplicationServices.Implementations
 
         }
 
-        public Doctor Remove(int id)
+        public Doctor Remove(string email)
         {
             try
             {
-                _doctorValidator.IdValidation(id);
+                _doctorValidator.ValidateEmail(email);
             }
             catch (Exception ex)
             {
                 throw new Exception("Validation failed\n" + ex.Message, ex);
             }
 
-            if (_doctorRepository.GetById(id) == null)
+            if (_doctorRepository.GetById(email) == null)
             {
                 throw new KeyNotFoundException("This doctor does not exist");
             }
 
-            Doctor doctor = _doctorRepository.Remove(id);
+            Doctor doctor = _doctorRepository.Remove(email);
             return doctor;
 
         }
