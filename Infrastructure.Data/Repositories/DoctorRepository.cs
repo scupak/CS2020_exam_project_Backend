@@ -39,6 +39,7 @@ namespace Infrastructure.Data.Repositories
             {
                 return ctx.Doctors
                     .AsNoTracking()
+                    .Include(doctor => doctor.Appointments)
                     .FirstOrDefault(doctor => doctor.DoctorEmailAddress == email);
             }
             catch (Exception ex)

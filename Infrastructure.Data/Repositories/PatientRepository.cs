@@ -24,7 +24,10 @@ namespace Infrastructure.Data.Repositories
 
         public Patient GetById(string id)
         {
-            return _ctx.Patients.AsNoTracking().FirstOrDefault(patient => patient.PatientCPR == id);
+            return _ctx.Patients
+                .AsNoTracking()
+                .Include(patient => patient.Appointments)
+                .FirstOrDefault(patient => patient.PatientCPR == id);
         }
 
         public Patient Add(Patient entity)

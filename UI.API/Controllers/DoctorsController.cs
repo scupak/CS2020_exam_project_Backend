@@ -118,6 +118,8 @@ namespace UI.API.Controllers
         /// <response code = "200">The doctor has been successfully removed</response>
         /// <response code = "500">an error has occurred</response>
         [HttpDelete("{email}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<Doctor> Remove(string email)
         {
             try
