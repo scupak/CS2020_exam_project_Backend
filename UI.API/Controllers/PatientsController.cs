@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
+using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,10 +31,29 @@ namespace UI.API.Controllers
             {
                 return Ok(PatientService.GetAll());
             }
-            catch (Exception e)
+            catch (DataBaseException ex)
             {
-                Console.WriteLine(e);
-                return StatusCode(500, e);
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
         }
 
@@ -51,10 +72,29 @@ namespace UI.API.Controllers
                 }
                 return Ok(patient);
             }
-            catch (Exception e)
+            catch (DataBaseException ex)
             {
-                Console.WriteLine(e);
-                return StatusCode(500, e);
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
         }
 
@@ -66,17 +106,30 @@ namespace UI.API.Controllers
             {
                 return string.IsNullOrEmpty(patient.PatientFirstName) ? BadRequest("FirstName is required to create a patient") : StatusCode(201, PatientService.Add(patient));
             }
-            catch (NullReferenceException e)
+            catch (DataBaseException ex)
             {
-                Console.WriteLine(e);
-                return StatusCode(404, e.Message);
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
             }
-            catch (Exception e)
+            catch (NullReferenceException ex)
             {
-                Console.WriteLine(e);
-                return StatusCode(500, e.Message);
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
             }
-
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
+            }
         }
 
         // PUT api/<PatientsController>/5
@@ -101,10 +154,29 @@ namespace UI.API.Controllers
                 }
 
             }
-            catch (Exception e)
+            catch (DataBaseException ex)
             {
-                Console.WriteLine(e);
-                return StatusCode(500, e.Message);
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
 
         }
@@ -125,12 +197,30 @@ namespace UI.API.Controllers
 
                 return StatusCode(202, returnpatient);
             }
-            catch (Exception e)
+            catch (DataBaseException ex)
             {
-                Console.WriteLine(e);
-                return StatusCode(404, e);
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
             }
-
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
+            }
         }
     }
 }

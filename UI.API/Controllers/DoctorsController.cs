@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
+using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,10 +28,14 @@ namespace UI.API.Controllers
         /// </summary>
         /// <returns>A list of doctors</returns>
         /// <response code = "200">returns the list of doctors</response>
-        /// <response code = "500">an error has occurred</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<List<Doctor>> GetAll()
         {
             try
@@ -37,9 +43,29 @@ namespace UI.API.Controllers
                 return Ok(_doctorService.GetAll());
 
             }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
             
         }
@@ -50,19 +76,43 @@ namespace UI.API.Controllers
         /// <returns>doctor</returns>
         /// <param name="email"> string</param>
         /// <response code = "200">Returns a doctor</response>
-        /// <response code = "500">an error has occurred</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpGet("{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Doctor> GetById(string email)
         {
             try
             {
                 return Ok(_doctorService.GetById(email));
             }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Something went wrong in the service \n" + ex.Message);
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
         }
 
@@ -72,19 +122,43 @@ namespace UI.API.Controllers
         /// <returns>doctor</returns>
         /// <param name="doctor">Doctor</param>
         /// <response code = "200">Doctor has been added</response>
-        /// <response code = "500">an error has occurred</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Doctor> Add([FromBody] Doctor doctor)
         {
             try
             {
                 return Ok(_doctorService.Add(doctor));
             }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
         }
 
@@ -94,19 +168,43 @@ namespace UI.API.Controllers
         /// <param name="doctor"></param>
         /// <returns> An updated doctor</returns>
         /// <response code = "200">Doctor has been updated</response>
-        /// <response code = "500">an error has occurred</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Doctor> Edit([FromBody] Doctor doctor)
         {
             try
             {
                 return Ok(_doctorService.Edit(doctor));
             }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
         }
 
@@ -116,19 +214,43 @@ namespace UI.API.Controllers
         /// <param name="email">string</param>
         /// <returns> the removed doctor</returns>
         /// <response code = "200">The doctor has been successfully removed</response>
-        /// <response code = "500">an error has occurred</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpDelete("{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<Doctor> Remove(string email)
         {
             try
             {
                 return Ok(_doctorService.Remove(email));
             }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, "Something went wrong in the service\n" + ex.Message);
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
         }
     }

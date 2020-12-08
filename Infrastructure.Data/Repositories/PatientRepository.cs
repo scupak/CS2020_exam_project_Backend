@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Core.Entities.Entities.BE;
+using Core.Entities.Exceptions;
 using Core.Services.DomainServices;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,42 +20,85 @@ namespace Infrastructure.Data.Repositories
 
         public List<Patient> GetAll()
         {
-            return _ctx.Patients.ToList();
+            try
+            {
+                return _ctx.Patients.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
+            
         }
 
         public Patient GetById(string id)
         {
-            return _ctx.Patients
-                .AsNoTracking()
-                .Include(patient => patient.Appointments)
-                .FirstOrDefault(patient => patient.PatientCPR == id);
+            try
+            {
+                return _ctx.Patients
+                    .AsNoTracking()
+                    .Include(patient => patient.Appointments)
+                    .FirstOrDefault(patient => patient.PatientCPR == id);
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public Patient Add(Patient entity)
         {
-            var addedPatient = _ctx.Patients.Add(entity);
-            _ctx.SaveChanges();
-            return addedPatient.Entity;
+            try
+            {
+                var addedPatient = _ctx.Patients.Add(entity);
+                _ctx.SaveChanges();
+                return addedPatient.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public Patient Edit(Patient entity)
         {
-            var updatedPatient = _ctx.Patients.Update(entity);
-            _ctx.SaveChanges();
-            return updatedPatient.Entity;
+            try
+            {
+                var updatedPatient = _ctx.Patients.Update(entity);
+                _ctx.SaveChanges();
+                return updatedPatient.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public Patient Remove(string id)
         {
-            var removedPatient = _ctx.Remove(new Patient() {PatientCPR = id});
-            _ctx.SaveChanges();
+            try
+            {
+                var removedPatient = _ctx.Remove(new Patient() {PatientCPR = id});
+                _ctx.SaveChanges();
 
-            return removedPatient.Entity;
+                return removedPatient.Entity;
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
 
         public int Count()
         {
-            return _ctx.Patients.Count();
+            try
+            {
+                return _ctx.Patients.Count();
+            }
+            catch (Exception ex)
+            {
+                throw new DataBaseException("Something went wrong in the database\n" + ex.Message);
+            }
         }
     }
 }

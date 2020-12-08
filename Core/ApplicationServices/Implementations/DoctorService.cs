@@ -26,14 +26,8 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Doctor GetById(string email)
         {
-            try
-            {
-                _doctorValidator.ValidateEmail(email);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("email validation failed\n" + ex.Message , ex);
-            }
+            _doctorValidator.ValidateEmail(email);
+            
 
             Doctor doctor = _doctorRepository.GetById(email);
 
@@ -48,15 +42,8 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Doctor Add(Doctor entity)
         {
-            try
-            {
-                _doctorValidator.DefaultValidator(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Validation failed\n" + ex.Message, ex);
-            }
-
+            _doctorValidator.DefaultValidator(entity);
+           
             var previousDoctor = _doctorRepository.GetById(entity.DoctorEmailAddress);
 
             if (previousDoctor != null)
@@ -71,14 +58,8 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Doctor Edit(Doctor entity)
         {
-            try
-            {
-                _doctorValidator.DefaultValidator(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Validation failed\n" + ex.Message, ex);
-            }
+           _doctorValidator.DefaultValidator(entity);
+            
 
             var previousDoctor = _doctorRepository.GetById(entity.DoctorEmailAddress);
 
@@ -97,15 +78,8 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Doctor Remove(string email)
         {
-            try
-            {
-                _doctorValidator.ValidateEmail(email);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Validation failed\n" + ex.Message, ex);
-            }
-
+            _doctorValidator.ValidateEmail(email);
+            
             if (_doctorRepository.GetById(email) == null)
             {
                 throw new KeyNotFoundException("This doctor does not exist");

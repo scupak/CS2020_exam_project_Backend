@@ -27,28 +27,16 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Patient GetById(string id)
         {
-            try
-            {
-                _patientValidator.ValidateCPR(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message,ex);
-            }
-
+          _patientValidator.ValidateCPR(id);
+            
             return _patientRepository.GetById(id);
         }
 
         public Patient Add(Patient entity)
         {
-            try 
-            {
-                _patientValidator.DefaultValidator(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message, ex);
-            }
+           
+            _patientValidator.DefaultValidator(entity);
+           
 
             if(_patientRepository.GetById(entity.PatientCPR) != null)
             {
@@ -61,7 +49,7 @@ namespace Core.Services.ApplicationServices.Implementations
         public Patient Edit(Patient entity)
         {
            
-                _patientValidator.DefaultValidator(entity);
+            _patientValidator.DefaultValidator(entity);
           
          
 
@@ -82,15 +70,8 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Patient Remove(string id)
         {
-            try
-            {
-                _patientValidator.ValidateCPR(id);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message,ex);
-            }
-
+            _patientValidator.ValidateCPR(id);
+            
             if(_patientRepository.GetById(id) == null)
             {
                 throw new ArgumentException("Nonexistant patient cannot be removed!");
