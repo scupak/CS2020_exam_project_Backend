@@ -340,7 +340,7 @@ namespace Infrastructure.UnitTests.ServiceTests
             Action action = () => service.Add(a);
 
             // assert
-            action.Should().Throw<KeyNotFoundException>("This related entity does not exist");
+            action.Should().Throw<KeyNotFoundException>().WithMessage("This related entity does not exist");
 
             _appointmentRepoMock.Verify(repo => repo
                 .Add(It.Is<Appointment>(appointment => appointment == a)), Times.Never);
@@ -395,6 +395,134 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _appointmentValidatorMock.Verify(validator => validator
                 .EditValidation(It.Is<Appointment>(appointment => appointment == aNew)), Times.Once);
+
+        }
+
+        [Fact]
+        public void Edit_WithNoExistingAppointment_ShouldThrowException()
+        {
+            //arrange
+            DateTime date = DateTime.Now.AddDays(3);
+            Appointment aNew = new Appointment()
+            {
+                AppointmentId = 1,
+                AppointmentDateTime = date,
+                DurationInMin = 15,
+                Description = "description",
+                DoctorEmailAddress = "Karl@gmail.com",
+                PatientCpr = "011200-4041"
+            };
+
+            var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
+
+            _allDoctors.Add("Karl@gmail.com", new Doctor() { DoctorEmailAddress = "Karl@gmail.com" });
+            _allDoctors.Add("Charlie@gmail.uk", new Doctor() { DoctorEmailAddress = "Charlie@gmail.uk" });
+
+            _allPatients.Add("011200-4041", new Patient() { PatientCPR = "011200-4041" });
+            _allPatients.Add("110695-0004", new Patient() { PatientCPR = "110695-0004" });
+            // act
+            Action action = () => service.Edit(aNew);
+
+            // assert
+            action.Should().Throw<KeyNotFoundException>().WithMessage("appointment does not exists");
+
+            _appointmentRepoMock.Verify(repo => repo
+                .Edit(It.Is<Appointment>(appointment => appointment == aNew)), Times.Never);
+
+            _appointmentValidatorMock.Verify(validator => validator
+                .EditValidation(It.Is<Appointment>(appointment => appointment == aNew)), Times.Once);
+
+        }
+
+        [Theory]
+        [InlineData(1, 15, null, "Karl@gmail.com", "011200-4041")]
+        [InlineData(1, 15, null, null, "011200-4041")]
+        [InlineData(1, 15, null, "Karl@gmail.com", null)]
+        [InlineData(1, 15, "Knee checkup", "Charlie@gmail.uk", "110695-0004")]
+        public void Edit_WithNonExitingRelation_ShouldThrowException(int id, int durationInMin, string description, string doctorEmailAddress, string patientCpr)
+        {
+            //arrange
+            DateTime date = DateTime.Now.AddDays(3);
+            Appointment aNew = new Appointment()
+            {
+                AppointmentId = id,
+                AppointmentDateTime = date,
+                DurationInMin = durationInMin,
+                Description = description,
+                DoctorEmailAddress = doctorEmailAddress,
+                PatientCpr = patientCpr
+            };
+
+            var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
+            var aOld = new Appointment() { AppointmentId = id };
+            _allAppointments.Add(aOld.AppointmentId, aOld);
+
+            // act
+            Action action = () => service.Edit(aNew);
+
+            // assert
+            action.Should().Throw<KeyNotFoundException>().WithMessage("This related entity does not exist");
+
+            _appointmentRepoMock.Verify(repo => repo
+                .Edit(It.Is<Appointment>(appointment => appointment == aNew)), Times.Never);
+
+            _appointmentValidatorMock.Verify(validator => validator
+                .EditValidation(It.Is<Appointment>(appointment => appointment == aNew)), Times.Once);
+
+        }
+
+        #endregion
+
+        #region Remove
+
+        [Fact]
+        public void Remove_ShouldNotThrowException()
+        {
+            //arrange
+            Appointment aNew = new Appointment() { AppointmentId = 1};
+
+            _allAppointments.Add(aNew.AppointmentId, aNew);
+
+            var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
+
+            // act
+            Action action = () => service.Remove(aNew.AppointmentId);
+            action.Should().NotThrow<Exception>();
+
+
+            // assert
+            Assert.Null(_appointmentRepoMock.Object.GetById(aNew.AppointmentId));
+
+            _appointmentRepoMock.Verify(repo => repo
+                .Remove(aNew.AppointmentId), Times.Once);
+
+            _appointmentValidatorMock.Verify(validator => validator
+                .IdValidation(It.Is<int>(appointmentId => appointmentId == aNew.AppointmentId)), Times.Once);
+
+        }
+
+        [Fact]
+        public void RemoveWithNoAppointment_ShouldThrowException()
+        {
+            //arrange
+            Appointment aNew = new Appointment() { AppointmentId = 1 };
+
+            
+
+            var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
+
+            // act
+            Action action = () => service.Remove(aNew.AppointmentId);
+            action.Should().Throw<KeyNotFoundException>().WithMessage("Appointment does not exist");
+
+
+            // assert
+
+            _appointmentRepoMock.Verify(repo => repo
+                .Remove(aNew.AppointmentId), Times.Never);
+
+            _appointmentValidatorMock.Verify(validator => validator
+                .IdValidation(It.Is<int>(appointmentId => appointmentId == aNew.AppointmentId)), Times.Once);
 
         }
 

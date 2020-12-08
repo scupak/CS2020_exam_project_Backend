@@ -28,6 +28,9 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Appointment GetById(int id)
         {
+            _appointmentValidator.IdValidation(id);
+            
+            
             Appointment appointment = _appointmentRepository.GetById(id);
 
             if (appointment == null)
@@ -40,6 +43,16 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Appointment Add(Appointment entity)
         {
+            _appointmentValidator.CreateValidation(entity);
+
+            if (entity.DoctorEmailAddress != null)
+            {
+                if (_doctorRepository.GetById(entity.DoctorEmailAddress) == null)
+                {
+                    
+                }
+            }
+
             return _appointmentRepository.Add(entity);
         }
 
