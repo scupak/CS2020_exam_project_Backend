@@ -60,15 +60,10 @@ namespace Core.Services.ApplicationServices.Implementations
 
         public Patient Edit(Patient entity)
         {
-            try
-            {
+           
                 _patientValidator.DefaultValidator(entity);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message,ex);
-
-            }
+          
+         
 
             var previousPatient = _patientRepository.GetById(entity.PatientCPR);
 

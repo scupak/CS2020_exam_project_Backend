@@ -66,10 +66,15 @@ namespace UI.API.Controllers
             {
                 return string.IsNullOrEmpty(patient.PatientFirstName) ? BadRequest("FirstName is required to create a patient") : StatusCode(201, PatientService.Add(patient));
             }
+            catch (NullReferenceException e)
+            {
+                Console.WriteLine(e);
+                return StatusCode(404, e.Message);
+            }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
 
         }
@@ -99,7 +104,7 @@ namespace UI.API.Controllers
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                return StatusCode(500, e);
+                return StatusCode(500, e.Message);
             }
 
         }
