@@ -81,6 +81,16 @@ namespace UI.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<Appointment> Add([FromBody] Appointment appointment)
         {
+            if (String.IsNullOrEmpty(appointment.DoctorEmailAddress))
+            {
+                appointment.DoctorEmailAddress = null;
+
+            }
+            if (String.IsNullOrEmpty(appointment.PatientCpr))
+            {
+                appointment.PatientCpr = null;
+
+            }
             try
             {
                 return Ok(_appointmentService.Add(appointment));
