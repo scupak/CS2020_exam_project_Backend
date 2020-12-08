@@ -32,7 +32,7 @@ namespace Core.Services.ApplicationServices.Implementations
 
             if (appointment == null)
             {
-                throw new KeyNotFoundException("This appointment does not exist");
+                throw new KeyNotFoundException("An appointment with this id does not exist");
             }
 
             return appointment;
