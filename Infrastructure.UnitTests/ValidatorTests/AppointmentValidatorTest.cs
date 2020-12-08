@@ -93,7 +93,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                     "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohelloh",
                 DurationInMin = 15
             });
-            action.Should().Throw<ArgumentException>().WithMessage("description is to long");
+            action.Should().Throw<ArgumentException>().WithMessage("description is too long");
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 Description = "my knee hurt",
                 DurationInMin = 15
             });
-            action.Should().Throw<ArgumentException>().WithMessage("The date it invalid, you cant set an appointment in the past");
+            action.Should().Throw<ArgumentException>().WithMessage("The date is invalid, you cant set an appointment in the past");
         }
 
         [Theory]
@@ -121,7 +121,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 Description = "my knee hurt",
                 DurationInMin = 0
             });
-            action.Should().Throw<ArgumentException>().WithMessage("The duration cannot be negative");
+            action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a duration");
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.CreateValidation(new Appointment()
             {
-                AppointmentDateTime = DateTime.Now.AddDays(-1),
+                AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description = "my knee hurt",
                 DurationInMin = 1441
             });
@@ -189,7 +189,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 DurationInMin = 15
             });
 
-            action.Should().Throw<ArgumentException>().WithMessage("Id cannot be negative");
+            action.Should().Throw<ArgumentException>().WithMessage("When updating an appointment you need an id");
         }
 
         [Fact]
@@ -198,6 +198,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.EditValidation(new Appointment()
             {
+                AppointmentId = 1,
                 Description = "my knee hurt",
                 DurationInMin = 15
             });
@@ -210,6 +211,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.EditValidation(new Appointment()
             {
+                AppointmentId = 1,
                 AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description = "my knee hurt"
             });
@@ -222,6 +224,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.EditValidation(new Appointment()
             {
+                AppointmentId = 1,
                 AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description =
                     "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello" +
@@ -229,7 +232,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                     "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohelloh",
                 DurationInMin = 15
             });
-            action.Should().Throw<ArgumentException>().WithMessage("description is to long");
+            action.Should().Throw<ArgumentException>().WithMessage("description is too long");
         }
 
         [Fact]
@@ -238,11 +241,12 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.EditValidation(new Appointment()
             {
+                AppointmentId = 1,
                 AppointmentDateTime = DateTime.Now.AddDays(-1),
                 Description = "my knee hurt",
                 DurationInMin = 15
             });
-            action.Should().Throw<ArgumentException>().WithMessage("The date it invalid, you cant set an appointment in the past");
+            action.Should().Throw<ArgumentException>().WithMessage("The date is invalid, you cant set an appointment in the past");
         }
 
         [Theory]
@@ -253,11 +257,12 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.EditValidation(new Appointment()
             {
+                AppointmentId = 1,
                 AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description = "my knee hurt",
                 DurationInMin = 0
             });
-            action.Should().Throw<ArgumentException>().WithMessage("The duration cannot be negative");
+            action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a duration");
         }
 
         [Fact]
@@ -266,7 +271,8 @@ namespace Infrastructure.UnitTests.ValidatorTests
             IAppointmentValidator appointmentValidator = new AppointmentValidator();
             Action action = () => appointmentValidator.EditValidation(new Appointment()
             {
-                AppointmentDateTime = DateTime.Now.AddDays(-1),
+                AppointmentId = 1,
+                AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description = "my knee hurt",
                 DurationInMin = 1441
             });

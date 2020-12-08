@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Core.Entities.Entities.BE;
 using Core.Services.Validators.Interfaces;
@@ -17,6 +18,30 @@ namespace Core.Services.Validators.Implementations
 
             CreateIdValidation(appointment);
             DateValidation(appointment);
+            DurationValidator(appointment);
+            DescriptionValidator(appointment);
+
+        }
+
+        private void DescriptionValidator(Appointment appointment)
+        {
+            if (appointment.Description.Length > 280)
+            {
+                throw new ArgumentException("description is too long");
+            }
+        }
+
+        private void DurationValidator(Appointment appointment)
+        {
+            if (appointment.DurationInMin < 1)
+            {
+                throw new ArgumentException("an appointment needs a duration");
+            }
+
+            if (appointment.DurationInMin > 1440)
+            {
+                throw new ArgumentException("The duration cannot be longer than one day");
+            }
         }
 
         private void DateValidation(Appointment appointment)
@@ -24,6 +49,11 @@ namespace Core.Services.Validators.Implementations
             if (appointment.AppointmentDateTime == DateTime.Parse("0001 - 01 - 01T00: 00:00"))
             {
                 throw new ArgumentException("an appointment needs a dateTime");
+            }
+
+            if (appointment.AppointmentDateTime.CompareTo(DateTime.Now) == -1)
+            {
+                throw new ArgumentException("The date is invalid, you cant set an appointment in the past");
             }
         }
 
@@ -37,12 +67,31 @@ namespace Core.Services.Validators.Implementations
 
         public void EditValidation(Appointment appointment)
         {
-            throw new NotImplementedException();
+            if (appointment == null)
+            {
+                throw new NullReferenceException("Appointment cannot be null");
+            }
+
+            EditIdValidation(appointment);
+            DateValidation(appointment);
+            DurationValidator(appointment);
+            DescriptionValidator(appointment);
+        }
+
+        private void EditIdValidation(Appointment appointment)
+        {
+            if (appointment.AppointmentId < 1)
+            {
+                throw new ArgumentException("When updating an appointment you need an id");
+            }
         }
 
         public void IdValidation(int id)
         {
-            throw new NotImplementedException();
+            if (id < 1)
+            {
+                throw new ArgumentException("Id cannot be negative");
+            }
         }
     }
 }
