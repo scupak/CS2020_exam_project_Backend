@@ -24,8 +24,7 @@ namespace Infrastructure.Data.Repositories
         {
             try
             {
-                int searchInt;
-
+               
                 var filteredList = new FilteredList<Patient>();
                 IEnumerable<Patient> filtering;
 

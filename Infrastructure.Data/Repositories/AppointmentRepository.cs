@@ -66,20 +66,22 @@ namespace Infrastructure.Data.Repositories
                             break;
 
                         case "DoctorEmailAddress":
+                            
                             filtering = filtering.Where(appointment =>
-                                appointment.DoctorEmailAddress.Contains(filter.SearchText));
+                                appointment.DoctorEmailAddress != null)
+                                .Where(appointment => appointment.DoctorEmailAddress.Contains(filter.SearchText));
                             break;
 
                         case "PatientCpr":
-                            filtering = filtering.Where(appointment =>
-                                appointment.PatientCpr.Contains(filter.SearchText));
+                            filtering = filtering.Where(appointment => appointment.PatientCpr != null)
+                                .Where(appointment => appointment.PatientCpr.Contains(filter.SearchText));
                             break;
                         default:
                             throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding appointment property");
                     }
                 }
 
-                if (!filter.OrderStartDateTime.Equals(null) && !filter.OrderStopDateTime.Equals(null))
+                if (!filter.OrderStartDateTime.Equals(DateTime.Parse("0001-01-01T00:00:00")) && !filter.OrderStopDateTime.Equals(DateTime.Parse("0001-01-01T00:00:00")))
                 {
                     if (filter.OrderStopDateTime.CompareTo(filter.OrderStartDateTime).Equals(1))
                     {

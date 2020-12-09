@@ -212,7 +212,7 @@ namespace Infrastructure.UnitTests.ServiceTests
         [Theory]
         [InlineData("Karl", "Mason", "doctor@gmail.com", "23115177", true)]
         [InlineData("Peter", "Holt", "Porter@hotmail.dk", "12345678", false)]
-        [InlineData("Sandra", "Bullock", "SB@Yahoo.uk", "09876543", null)]
+        [InlineData("Sandra", "Bullock", "SB@Yahoo.uk", "09876543", false)]
         public void Add_WithValidDoctor_shouldNotThrowException( string firstname, string lastname, string emailAddress, string phoneNumber, bool isAdmin)
         {
             // arrange
@@ -240,7 +240,7 @@ namespace Infrastructure.UnitTests.ServiceTests
         [Theory]
         [InlineData("Karl", "Mason", "email@gmail.com", "23115177", true)]
         [InlineData("Peter", "Holt", "email@gmail.com", "12345678", false)]
-        [InlineData("Sandra", "Bullock", "email@gmail.com", "09876543", null)]
+        [InlineData("Sandra", "Bullock", "email@gmail.com", "09876543", false)]
         public void Edit_WithValidDoctor_shouldNotThrowException(string firstname, string lastname, string emailAddress, string phoneNumber, bool isAdmin)
         {
             // arrange
