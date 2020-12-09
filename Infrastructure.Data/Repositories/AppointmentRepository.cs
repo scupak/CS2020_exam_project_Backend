@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Entities.Exceptions;
 using Core.Services.DomainServices;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +19,58 @@ namespace Infrastructure.Data.Repositories
             _clinicContext = clinicContext;
         }
 
-        public List<Appointment> GetAll()
+        public FilteredList<Appointment> GetAll(Filter filter)
         {
             try
             {
-                return _clinicContext.Appointments
-                    .AsNoTracking()
-                    .ToList();
+                int searchInt;
+
+                var filteredList = new FilteredList<Appointment>();
+
+                filteredList.TotalCount = Count();
+                filteredList.FilterUsed = filter;
+
+                if (filter.CurrentPage == 0)
+                {
+                    filter.CurrentPage = 1;
+                }
+
+                if (filter.ItemsPrPage == 0)
+                {
+                    filter.ItemsPrPage = 10;
+                }
+
+                IEnumerable<Appointment> filtering = _clinicContext.Appointments.AsNoTracking()
+                    .Skip((filter.CurrentPage - 1) * filter.ItemsPrPage)
+                    .Take(filter.ItemsPrPage);
+
+                if (!string.IsNullOrEmpty(filter.SearchText))
+                {
+                    switch (filter.SearchField)
+                    {
+                        case "DurationInMin":
+                            if (int.TryParse(filter.SearchText, out searchInt))
+                            {
+                                filtering = filtering.Where(appointment => appointment.DurationInMin.Equals(searchInt));
+                            }
+                            else
+                            {
+                                throw new InvalidDataException("Wrong input, has to be a valid int");
+                            }
+                            break;
+
+                        case "Description":
+                            filtering = filtering.Where(appointment =>
+                                appointment.Description.Contains(filter.SearchText));
+                            break;
+
+                        case "DoctorEmailAddress":
+                            filtering = filtering.Where(appointment =>
+                                appointment.DoctorEmailAddress.Contains(filter.SearchText));
+                            break;
+                    }
+                }
+
             }
             catch (Exception ex)
             {
