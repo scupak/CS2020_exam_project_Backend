@@ -50,33 +50,30 @@ namespace Infrastructure.Data.Repositories
                 {
                     switch (filter.SearchField)
                     {
-                        case "DurationInMin":
-                            if (int.TryParse(filter.SearchText, out searchInt))
-                            {
-                                filtering = filtering.Where(appointment => appointment.DurationInMin.Equals(searchInt));
-                            }
-                            else
-                            {
-                                throw new InvalidDataException("Wrong input, has to be a valid int");
-                            }
+                        case "PatientFirstName":
+                            filtering = filtering.Where(patient =>
+                                patient.PatientFirstName.Contains(filter.SearchText));
                             break;
 
-                        case "Description":
-                            filtering = filtering.Where(appointment =>
-                                appointment.Description.Contains(filter.SearchText));
-                            break;
-
-                        case "DoctorEmailAddress":
-                            filtering = filtering.Where(appointment =>
-                                appointment.DoctorEmailAddress.Contains(filter.SearchText));
+                        case "PatientLastName":
+                            filtering = filtering.Where(patient =>
+                                patient.PatientLastName.Contains(filter.SearchText));
                             break;
 
                         case "PatientCpr":
-                            filtering = filtering.Where(appointment =>
-                                appointment.Description.Contains(filter.SearchText));
+                            filtering = filtering.Where(patient =>
+                                patient.PatientCPR.Contains(filter.SearchText));
+                            break;
+                        case "PatientPhone":
+                            filtering = filtering.Where(patient =>
+                                patient.PatientPhone.Contains(filter.SearchText));
+                            break;
+                        case "PatientEmail":
+                            filtering = filtering.Where(patient =>
+                                patient.PatientEmail.Contains(filter.SearchText));
                             break;
                         default:
-                            throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding appointment property");
+                            throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding patient property");
                     }
                 }
 
@@ -85,7 +82,7 @@ namespace Infrastructure.Data.Repositories
                     var prop = typeof(Patient).GetProperty(filter.OrderProperty);
                     if (prop == null)
                     {
-                        throw new InvalidDataException("Wrong OrderProperty input, OrderProperty has to match to corresponding appointment property");
+                        throw new InvalidDataException("Wrong OrderProperty input, OrderProperty has to match to corresponding patient property");
                     }
 
 

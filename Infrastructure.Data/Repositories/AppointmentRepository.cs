@@ -72,7 +72,7 @@ namespace Infrastructure.Data.Repositories
 
                         case "PatientCpr":
                             filtering = filtering.Where(appointment =>
-                                appointment.Description.Contains(filter.SearchText));
+                                appointment.PatientCpr.Contains(filter.SearchText));
                             break;
                         default:
                             throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding appointment property");

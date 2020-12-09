@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Implementations;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
@@ -50,14 +51,19 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _doctorRepoMock
                 .Setup(repo => repo
-                    .GetAll())
-                .Returns(() => _allDoctors.Values.ToList());
+                    .GetAll(It.IsAny<Filter>()))
+                .Returns<Filter>((filter) => new FilteredList<Doctor>() { List = _allDoctors.Values.ToList(), TotalCount = _allDoctors.Count, FilterUsed = filter });
 
             _doctorRepoMock
                 .Setup(repo => repo
                     .GetById(It.IsAny<string>()))
                 .Returns<string>((email) => _allDoctors
                     .ContainsKey(email) ? _allDoctors[email] : null);
+
+            _doctorRepoMock
+                .Setup(repo => repo
+                    .Count())
+                .Returns(() => _allDoctors.Count);
         }
 
         [Fact]
@@ -86,34 +92,67 @@ namespace Infrastructure.UnitTests.ServiceTests
 
         #region GetAll
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void GetAllDoctors(int doctorCount)
+        [Fact]
+        public void GetAllDoctors()
         {
             //arrange
             Doctor d1 = new Doctor(){DoctorEmailAddress = "lumby98@gmail.com"};
             Doctor d2 = new Doctor(){DoctorEmailAddress = "michael@hotmail.com"};
             var doctors = new List<Doctor>() { d1, d2};
+            Filter filter = new Filter();
+
+            _allDoctors.Add(d1.DoctorEmailAddress, d1);
+            _allDoctors.Add(d2.DoctorEmailAddress, d2);
+
 
             // the doctors in the repository
-            var expected = doctors.GetRange(0, doctorCount);
-            foreach (var d in expected)
-            {
-                _allDoctors.Add(d.DoctorEmailAddress, d);
-            }
+            var expected = new FilteredList<Doctor>()
+                { List = _allDoctors.Values.ToList(), TotalCount = _allDoctors.Count, FilterUsed = filter };
+
+            expected.TotalCount = _allDoctors.Count;
 
             var service = new DoctorService(_doctorRepoMock.Object, _doctorValidatorMock.Object);
 
             // act
-            var result = service.GetAll();
+            var result = service.GetAll(filter);
 
             // assert
-            Assert.Equal(expected, result);
-            _doctorRepoMock.Verify(repo => repo.GetAll(), Times.Once);
+            Assert.Equal(expected.List, result.List);
+            _doctorRepoMock.Verify(repo => repo.GetAll(It.Is<Filter>(dFilter => dFilter == filter)), Times.Once);
 
         }
+
+        [Fact]
+        public void GetAllDoctorsNegativPagginh_ShoudlThrowException()
+        {
+            //arrange
+            Doctor d1 = new Doctor() { DoctorEmailAddress = "lumby98@gmail.com" };
+            Doctor d2 = new Doctor() { DoctorEmailAddress = "michael@hotmail.com" };
+            var doctors = new List<Doctor>() { d1, d2 };
+            Filter filter = new Filter() {CurrentPage = -1};
+
+            _allDoctors.Add(d1.DoctorEmailAddress, d1);
+            _allDoctors.Add(d2.DoctorEmailAddress, d2);
+
+
+            // the doctors in the repository
+            var expected = new FilteredList<Doctor>()
+                { List = _allDoctors.Values.ToList(), TotalCount = _allDoctors.Count, FilterUsed = filter };
+
+            expected.TotalCount = _allDoctors.Count;
+
+            var service = new DoctorService(_doctorRepoMock.Object, _doctorValidatorMock.Object);
+
+            // act
+            Action action = () => service.GetAll(filter);
+
+            // assert
+            action.Should().Throw<InvalidDataException>().WithMessage("current page and items pr page can't be negative");
+            _doctorRepoMock.Verify(repo => repo.GetAll(It.Is<Filter>(dFilter => dFilter == filter)), Times.Never);
+
+        }
+
+
 
         #endregion
 

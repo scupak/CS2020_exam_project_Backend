@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
 using Core.Services.Validators.Interfaces;
@@ -20,9 +21,25 @@ namespace Core.Services.ApplicationServices.Implementations
             _patientValidator = patientValidator;
         }
 
-        public List<Patient> GetAll()
+        public FilteredList<Patient> GetAll(Filter filter)
         {
-            return _patientRepository.GetAll();
+            if (filter.CurrentPage < 0 || filter.ItemsPrPage < 0)
+            {
+                throw new InvalidDataException("current page and items pr page can't be negative");
+            }
+
+            if ((filter.CurrentPage - 1) * filter.ItemsPrPage >= _patientRepository.Count())
+            {
+                throw new ArgumentException("no more patients");
+            }
+
+            var filteredPatients = _patientRepository.GetAll(filter);
+
+            if (filteredPatients.List.Count < 1)
+            {
+                throw new KeyNotFoundException("Could not find patients that satisfy the filter");
+            }
+            return filteredPatients;
         }
 
         public Patient GetById(string id)
