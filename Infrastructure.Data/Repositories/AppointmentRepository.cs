@@ -26,23 +26,24 @@ namespace Infrastructure.Data.Repositories
                 int searchInt;
 
                 var filteredList = new FilteredList<Appointment>();
+                IEnumerable<Appointment> filtering;
 
                 filteredList.TotalCount = Count();
                 filteredList.FilterUsed = filter;
 
-                if (filter.CurrentPage == 0)
+                if (filter.CurrentPage != 0 && filter.ItemsPrPage != 0)
                 {
-                    filter.CurrentPage = 1;
+                   filtering = _clinicContext.Appointments.AsNoTracking()
+                        .Skip((filter.CurrentPage - 1) * filter.ItemsPrPage)
+                        .Take(filter.ItemsPrPage);
+
+                }
+                else
+                {
+                   filtering = _clinicContext.Appointments.AsNoTracking();
                 }
 
-                if (filter.ItemsPrPage == 0)
-                {
-                    filter.ItemsPrPage = 10;
-                }
-
-                IEnumerable<Appointment> filtering = _clinicContext.Appointments.AsNoTracking()
-                    .Skip((filter.CurrentPage - 1) * filter.ItemsPrPage)
-                    .Take(filter.ItemsPrPage);
+                
 
                 if (!string.IsNullOrEmpty(filter.SearchText))
                 {
@@ -68,8 +69,49 @@ namespace Infrastructure.Data.Repositories
                             filtering = filtering.Where(appointment =>
                                 appointment.DoctorEmailAddress.Contains(filter.SearchText));
                             break;
+
+                        case "PatientCpr":
+                            filtering = filtering.Where(appointment =>
+                                appointment.Description.Contains(filter.SearchText));
+                            break;
+                        default:
+                            throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding appointment property");
                     }
                 }
+
+                if (!filter.OrderStartDateTime.Equals(null) && !filter.OrderStopDateTime.Equals(null))
+                {
+                    if (filter.OrderStopDateTime.CompareTo(filter.OrderStartDateTime).Equals(1))
+                    {
+                        filtering = filtering.Where(appointment =>
+                            (appointment.AppointmentDateTime >= filter.OrderStartDateTime && appointment.AppointmentDateTime <= filter.OrderStopDateTime)
+                            &&
+                            (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= filter.OrderStartDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= filter.OrderStopDateTime));
+                        
+                    }
+                    else
+                    {
+                        throw new ArgumentException("start time cannot be later than stop time");
+                    }
+                }
+                if (!string.IsNullOrEmpty(filter.OrderDirection) && !string.IsNullOrEmpty(filter.OrderProperty))
+                {
+                    var prop = typeof(Appointment).GetProperty(filter.OrderProperty);
+                    if (prop == null)
+                    {
+                        throw new InvalidDataException("Wrong OrderProperty input, OrderProperty has to match to corresponding pet property");
+                    }
+
+
+
+                    filtering = "ASC".Equals(filter.OrderDirection)
+                        ? filtering.OrderBy(a => prop.GetValue(a, null))
+                        : filtering.OrderByDescending(a => prop.GetValue(a, null));
+                }
+
+                filteredList.List = filtering.ToList();
+                return filteredList;
+
 
             }
             catch (Exception ex)

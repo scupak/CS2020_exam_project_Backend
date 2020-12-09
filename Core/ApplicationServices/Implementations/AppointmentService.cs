@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
 using Core.Services.Validators.Interfaces;
@@ -21,9 +24,25 @@ namespace Core.Services.ApplicationServices.Implementations
             _appointmentValidator = appointmentValidator;
         }
 
-        public List<Appointment> GetAll()
+        public FilteredList<Appointment> GetAll(Filter filter)
         {
-            return _appointmentRepository.GetAll();
+            if (filter.CurrentPage < 0 || filter.ItemsPrPage < 0)
+            {
+                throw new InvalidDataException("current page and items pr page can't be negative");
+            }
+
+            if ((filter.CurrentPage - 1) * filter.ItemsPrPage >= _appointmentRepository.Count())
+            {
+                throw new ArgumentException("no more appointments");
+            }
+
+            var filteredAppointments = _appointmentRepository.GetAll(filter);
+
+            if (filteredAppointments.List.Count < 1)
+            {
+                throw new KeyNotFoundException("Could not find products that satisfy the filter");
+            }
+            return filteredAppointments;
         }
 
         public Appointment GetById(int id)
