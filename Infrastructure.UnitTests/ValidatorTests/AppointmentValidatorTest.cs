@@ -119,7 +119,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
             {
                 AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description = "my knee hurt",
-                DurationInMin = 0
+                DurationInMin = duration
             });
             action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a duration");
         }
@@ -260,7 +260,7 @@ namespace Infrastructure.UnitTests.ValidatorTests
                 AppointmentId = 1,
                 AppointmentDateTime = DateTime.Now.AddDays(1),
                 Description = "my knee hurt",
-                DurationInMin = 0
+                DurationInMin = duration
             });
             action.Should().Throw<ArgumentException>().WithMessage("an appointment needs a duration");
         }
