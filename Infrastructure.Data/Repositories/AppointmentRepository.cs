@@ -62,6 +62,7 @@ namespace Infrastructure.Data.Repositories
 
                         case "Description":
                             filtering = filtering.Where(appointment =>
+                                appointment.Description != null).Where(appointment =>
                                 appointment.Description.Contains(filter.SearchText));
                             break;
 
