@@ -99,7 +99,7 @@ namespace Infrastructure.Data.Repositories
                     var prop = typeof(Appointment).GetProperty(filter.OrderProperty);
                     if (prop == null)
                     {
-                        throw new InvalidDataException("Wrong OrderProperty input, OrderProperty has to match to corresponding pet property");
+                        throw new InvalidDataException("Wrong OrderProperty input, OrderProperty has to match to corresponding appointment property");
                     }
 
 

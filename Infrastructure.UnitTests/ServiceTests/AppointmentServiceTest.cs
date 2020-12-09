@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Implementations;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
@@ -59,9 +60,9 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _appointmentRepoMock
                 .Setup(repo => repo
-                    .GetAll())
-                .Returns(() => _allAppointments.Values.ToList());
-
+                    .GetAll(It.IsAny<Filter>()))
+                .Returns<Filter>((filter) => new FilteredList<Appointment>(){List = _allAppointments.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter});
+            
             _appointmentRepoMock
                 .Setup(repo => repo
                     .GetById(It.IsAny<int>()))
@@ -99,8 +100,8 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _doctorRepoMock
                 .Setup(repo => repo
-                    .GetAll())
-                .Returns(() => _allDoctors.Values.ToList());
+                    .GetAll(It.IsAny<Filter>()))
+                .Returns<Filter>((filter) => new FilteredList<Doctor>() { List = _allDoctors.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter });
 
             _doctorRepoMock
                 .Setup(repo => repo
@@ -141,8 +142,8 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _patientRepoMock
                 .Setup(repo => repo
-                    .GetAll())
-                .Returns(() => _allPatients.Values.ToList());
+                    .GetAll(It.IsAny<Filter>()))
+                .Returns<Filter>((filter) => new FilteredList<Patient>() { List = _allPatients.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter });
 
             _patientRepoMock
                 .Setup(repo => repo
@@ -202,9 +203,12 @@ namespace Infrastructure.UnitTests.ServiceTests
             Appointment a2 = new Appointment(){AppointmentId = 2};
             var appointments = new List<Appointment>() { a1, a2 };
 
+            Filter filter = new Filter() {};
+
             // the doctors in the repository
-            var expected = appointments.GetRange(0, appointmentCount);
-            foreach (var a in expected)
+            var expected = new FilteredList<Appointment>()
+                {List = appointments.GetRange(0, appointmentCount), TotalCount = _allAppointments.Count, FilterUsed = filter};
+            foreach (var a in expected.List)
             {
                 _allAppointments.Add(a.AppointmentId, a);
             }
@@ -212,11 +216,11 @@ namespace Infrastructure.UnitTests.ServiceTests
             var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
 
             // act
-            var result = service.GetAll();
+            var result = service.GetAll(filter);
 
             // assert
             Assert.Equal(expected, result);
-            _appointmentRepoMock.Verify(repo => repo.GetAll(), Times.Once);
+            _appointmentRepoMock.Verify(repo => repo.GetAll(It.Is<Filter>(afilter => afilter == filter)), Times.Once);
 
         }
 

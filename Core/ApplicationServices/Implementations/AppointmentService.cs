@@ -40,7 +40,7 @@ namespace Core.Services.ApplicationServices.Implementations
 
             if (filteredAppointments.List.Count < 1)
             {
-                throw new KeyNotFoundException("Could not find products that satisfy the filter");
+                throw new KeyNotFoundException("Could not find appointments that satisfy the filter");
             }
             return filteredAppointments;
         }
