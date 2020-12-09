@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class DoctorRepository: IRepository<Doctor, int>
+    public class DoctorRepository: IRepository<Doctor, string>
     {
         private readonly ClinicContext ctx;
 
@@ -33,13 +33,14 @@ namespace Infrastructure.Data.Repositories
             
         }
 
-        public Doctor GetById(int id)
+        public Doctor GetById(string email)
         {
             try
             {
                 return ctx.Doctors
                     .AsNoTracking()
-                    .FirstOrDefault(doctor => doctor.DoctorId == id);
+                    .Include(doctor => doctor.Appointments)
+                    .FirstOrDefault(doctor => doctor.DoctorEmailAddress == email);
             }
             catch (Exception ex)
             {
@@ -77,11 +78,11 @@ namespace Infrastructure.Data.Repositories
             }
         }
 
-        public Doctor Remove(int id)
+        public Doctor Remove(string email)
         {
             try
             {
-                Doctor d = new Doctor() { DoctorId = id };
+                Doctor d = new Doctor() { DoctorEmailAddress = email };
 
                 var entry = ctx.Remove(d);
                 ctx.SaveChanges();

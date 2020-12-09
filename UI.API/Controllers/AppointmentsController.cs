@@ -1,47 +1,273 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Entities.Entities.BE;
+using Core.Entities.Exceptions;
+using Core.Services.ApplicationServices.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace UI.API.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class AppointmentsController : ControllerBase
     {
-        // GET: api/<AppointmentsController>
+        private readonly IService<Appointment, int> _appointmentService;
+
+        public AppointmentsController(IService<Appointment, int> appointmentService)
+        {
+            _appointmentService = appointmentService;
+        }
+
+        /// <summary>
+        /// Returns a list of all the appointments in the database
+        /// </summary>
+        /// <returns>A list of appointments</returns>
+        /// <response code = "200">returns the list of appointments</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpGet]
-        public IEnumerable<string> Get()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet]
+        public ActionResult<List<Appointment>> GetAll()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                return Ok(_appointmentService.GetAll());
+
+            }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
+            }
         }
 
-        // GET api/<AppointmentsController>/5
+        /// <summary>
+        /// Returns an appointment with a specified id
+        /// </summary>
+        /// <param name="id">int</param>
+        /// <returns>An appointment</returns>
+        /// <response code = "200">returns the requested appointment</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult<Appointment> GetById(int id)
         {
-            return "value";
+            try
+            {
+                return Ok(_appointmentService.GetById(id));
+
+            }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
+            }
         }
 
-        // POST api/<AppointmentsController>
+        /// <summary>
+        /// Adds an appointment to the database
+        /// </summary>
+        /// <param name="appointment">Appointment</param>
+        /// <returns>An added appointment</returns>
+        /// <response code = "200">returns the added appointment</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Appointment> Add([FromBody] Appointment appointment)
         {
+            if (String.IsNullOrEmpty(appointment.DoctorEmailAddress))
+            {
+                appointment.DoctorEmailAddress = null;
+
+            }
+            if (String.IsNullOrEmpty(appointment.PatientCpr))
+            {
+                appointment.PatientCpr = null;
+
+            }
+            try
+            {
+                return Ok(_appointmentService.Add(appointment));
+
+            }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
+            }
         }
 
-        // PUT api/<AppointmentsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        /// <summary>
+        /// This method is used to update an appointment with new properties.
+        /// </summary>
+        /// <param name="appointment">Appointment</param>
+        /// <returns>An updated appointment</returns>
+        /// <response code = "200">The appointment has been updated</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Appointment> Edit([FromBody] Appointment appointment)
         {
+            try
+            {
+                return Ok(_appointmentService.Edit(appointment));
+
+            }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
+            }
         }
 
-        // DELETE api/<AppointmentsController>/5
+        /// <summary>
+        /// This method is used to remove an appointment from the database
+        /// </summary>
+        /// <param name="id">int</param>
+        /// <returns>The removed appointment</returns>
+        /// <response code = "200">The appointment has been successfully removed</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Appointment> Remove(int id)
         {
+            try
+            {
+                return Ok(_appointmentService.Remove(id));
+
+            }
+            catch (DataBaseException ex)
+            {
+                return StatusCode(500, "Something went wrong in the database\n" + ex.Message);
+            }
+            catch (NullReferenceException ex)
+            {
+                return StatusCode(400, "Missing arguments\n" + ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return StatusCode(404, "Could not find entity\n" + ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return StatusCode(400, "Invalid input\n" + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Something went wrong\n" + ex.Message);
+            }
         }
     }
 }

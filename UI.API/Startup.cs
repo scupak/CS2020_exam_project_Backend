@@ -62,13 +62,17 @@ namespace UI.API
             }
 
             services.AddTransient<IDbInitializer, DbInitializer>();
-            services.AddScoped<IRepository<Doctor, int>, DoctorRepository>();
-            services.AddScoped<IService<Doctor, int>, DoctorService>();
+            services.AddScoped<IRepository<Doctor, string>, DoctorRepository>();
+            services.AddScoped<IService<Doctor, string>, DoctorService>();
             services.AddScoped<IDoctorValidator, DoctorValidator>();
 
             services.AddScoped<IRepository<Patient, string>, PatientRepository>();
             services.AddScoped<IService<Patient, string>, PatientService>();
             services.AddScoped<IPatientValidator, PatientValidator>();
+
+            services.AddScoped<IRepository<Appointment, int>, AppointmentRepository>();
+            services.AddScoped<IService<Appointment, int>, AppointmentService>();
+            services.AddScoped<IAppointmentValidator, AppointmentValidator>();
 
             //Set a max depth for Json to prevent endless nesting
             services.AddControllers().AddNewtonsoftJson(options =>
