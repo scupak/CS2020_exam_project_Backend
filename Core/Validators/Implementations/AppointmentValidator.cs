@@ -25,9 +25,13 @@ namespace Core.Services.Validators.Implementations
 
         private void DescriptionValidator(Appointment appointment)
         {
-            if (appointment.Description.Length > 280)
+            if (appointment.Description != null)
             {
-                throw new ArgumentException("description is too long");
+
+                if (appointment.Description.Length > 280)
+                {
+                    throw new ArgumentException("description is too long");
+                }
             }
         }
 
