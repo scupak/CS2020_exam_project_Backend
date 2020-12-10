@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
 using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -24,6 +25,7 @@ namespace UI.API.Controllers
         }
 
         // GET: api/<PatientsController>
+        [Authorize(Roles = "Administrator, Doctor")]
         [HttpGet]
         public ActionResult<Patient> Get()
         {
