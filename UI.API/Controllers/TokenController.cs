@@ -37,15 +37,62 @@ namespace UI.API.Controllers
             //var user = repository.GetAll().FirstOrDefault(u => u.Username == model.Username);
             try
             {
+                //check if the username is a valid email. 
                 _doctorValidator.ValidateEmail(model.Username);
+                //get the doctor
                 Doctor doctor = _doctorService.GetAll().FirstOrDefault(doc => doc.DoctorEmailAddress == model.Username);
+
+                // check if doctor exists
+                if (doctor == null)
+                {
+                    return Unauthorized();
+                }
+                // check if password is correct
+                if (!authenticationHelper.VerifyPasswordHash(model.Password, doctor.PasswordHash,
+                    doctor.PasswordSalt))
+                {
+                    return Unauthorized();
+                }
+
+
+                // Authentication successful
+                return Ok(new
+                {
+                    username = doctor.DoctorEmailAddress,
+                    token = authenticationHelper.GenerateToken(doctor)
+                });
             }
             catch(ArgumentException ex)
             {
                 try
                 {
+                    //check if the username is a valid cpr. 
                     _PatientValidator.ValidateCPR(model.Username);
-                    Patient patient = PatientService.GetAll().FirstOrDefault(patient => patient.PatientCPR == model.Username);
+
+                    //get the patient
+                    Patient patient = PatientService.GetAll()
+                        .FirstOrDefault(p => p.PatientCPR == model.Username);
+
+                    // check if patient exists
+                    if (patient == null)
+                    {
+                        return Unauthorized();
+                    }
+
+                    // check if password is correct
+                    if (!authenticationHelper.VerifyPasswordHash(model.Password, patient.PasswordHash,
+                        patient.PasswordSalt))
+                    {
+                        return Unauthorized();
+                    }
+
+                    // Authentication successful
+                    return Ok(new
+                    {
+                        username = patient.PatientCPR,
+                        token = authenticationHelper.GenerateToken(patient)
+                    });
+
                 }
                 catch(NullReferenceException e)
                 {
@@ -56,21 +103,14 @@ namespace UI.API.Controllers
                     return Unauthorized();
                 }
             }
-
-            // check if username exists
-            if (user == null)
-                return Unauthorized();
-
-            // check if password is correct
-            if (!authenticationHelper.VerifyPasswordHash(model.Password, user.PasswordHash, user.PasswordSalt))
-                return Unauthorized();
-
+            /*
             // Authentication successful
             return Ok(new
             {
                 username = user.Username,
                 token = authenticationHelper.GenerateToken(user)
             });
+            */
         }
 
     }
