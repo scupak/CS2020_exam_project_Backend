@@ -160,6 +160,39 @@ namespace Infrastructure.Data.Repositories
         {
             try
             {
+                if (_clinicContext.Appointments.Any(appointment => appointment.DoctorEmailAddress == email))
+                {
+                    if (!_clinicContext.Doctors.Any(doctor => doctor.DoctorEmailAddress == "Doctor@Default.com"))
+                    {
+                        Doctor doctorDefault = new Doctor()
+                        {
+                            DoctorEmailAddress = "Doctor@Default.com",
+                            FirstName = "Doctor",
+                            LastName = "Default",
+                            PhoneNumber = "22222222"
+                        };
+
+                        Add(doctorDefault);
+                    }
+
+                    if (_clinicContext.Doctors.Any(doctor => doctor.DoctorEmailAddress == "Doctor@Default.com"))
+                    {
+                        IEnumerable<Appointment> appointmentsToDefault =
+                            _clinicContext.Appointments.Where(appointment => appointment.DoctorEmailAddress == email);
+
+                        foreach (var appointment in appointmentsToDefault)
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        throw new DataBaseException("DoctorDefault does not exist, even though they should");
+                    }
+
+                   
+                }
+
                 Doctor d = new Doctor() { DoctorEmailAddress = email };
 
                 var entry = _clinicContext.Remove(d);

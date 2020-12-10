@@ -267,6 +267,38 @@ namespace Infrastructure.UnitTests.ServiceTests
 
         }
 
+        [Fact]
+        public void GetAllAppointmentsIndexOutOfBounds_ShouldThrowException()
+        {
+            //arrange
+            Appointment a1 = new Appointment() { AppointmentId = 1 };
+            Appointment a2 = new Appointment() { AppointmentId = 2 };
+            Appointment a3 = new Appointment() { AppointmentId = 3 };
+
+            Filter filter = new Filter() { CurrentPage = 2, ItemsPrPage = 3};
+
+            _allAppointments.Add(a1.AppointmentId, a1);
+            _allAppointments.Add(a2.AppointmentId, a2);
+            _allAppointments.Add(a3.AppointmentId, a3);
+            // the doctors in the repository
+            var expected = new FilteredList<Appointment>()
+                { List = _allAppointments.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter };
+
+
+            expected.TotalCount = _allAppointments.Count;
+            var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
+
+            // act
+            Action action = () => service.GetAll(filter);
+
+            // assert
+            action.Should().Throw<ArgumentException>()
+                .WithMessage("no more appointments");
+            _appointmentRepoMock.Verify(repo => repo.GetAll(It.Is<Filter>(aFilter => aFilter == filter)), Times.Never);
+
+        }
+
+
         #endregion
 
         #region GetById
