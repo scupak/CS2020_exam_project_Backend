@@ -78,6 +78,19 @@ namespace Core.Services.ApplicationServices.Implementations
                 }
             }
 
+            Filter filter = new Filter()
+            {
+                OrderStartDateTime = entity.AppointmentDateTime,
+                OrderStopDateTime = entity.AppointmentDateTime.AddMinutes(entity.DurationInMin),
+                SearchField = "DoctorEmailAddress",
+                SearchText = entity.DoctorEmailAddress
+            };
+
+            if (_appointmentRepository.GetAll(filter).List.Count > 0)
+            {
+                throw new ArgumentException("Time is Already taken for this doctor");
+            }
+
             return _appointmentRepository.Add(entity);
         }
 
