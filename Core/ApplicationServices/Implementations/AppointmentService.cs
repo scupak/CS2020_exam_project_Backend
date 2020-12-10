@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Core.Entities.Entities.BE;
 using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Interfaces;
@@ -80,15 +81,22 @@ namespace Core.Services.ApplicationServices.Implementations
 
             Filter filter = new Filter()
             {
-                OrderStartDateTime = entity.AppointmentDateTime,
-                OrderStopDateTime = entity.AppointmentDateTime.AddMinutes(entity.DurationInMin),
                 SearchField = "DoctorEmailAddress",
                 SearchText = entity.DoctorEmailAddress
             };
 
-            if (_appointmentRepository.GetAll(filter).List.Count > 0)
+            List<Appointment> filtering = _appointmentRepository.GetAll(filter).List;
+            IEnumerable<Appointment> reFiltering;
+
+
+            reFiltering = filtering.Where(appointment => 
+                (appointment.AppointmentDateTime <= entity.AppointmentDateTime.AddMinutes(entity.DurationInMin))
+                && 
+                (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= entity.AppointmentDateTime));
+
+            if (reFiltering.Any())
             {
-                throw new ArgumentException("Time is Already taken for this doctor");
+                throw new ArgumentException("An appointment for this doctor in this time-frame is already taken");
             }
 
             return _appointmentRepository.Add(entity);
