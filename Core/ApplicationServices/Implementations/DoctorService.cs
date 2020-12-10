@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
 using Core.Services.Validators.Interfaces;
@@ -19,9 +21,25 @@ namespace Core.Services.ApplicationServices.Implementations
             _doctorValidator = doctorValidator;
         }
 
-        public List<Doctor> GetAll()
+        public FilteredList<Doctor> GetAll(Filter filter)
         {
-            return _doctorRepository.GetAll();
+            if (filter.CurrentPage < 0 || filter.ItemsPrPage < 0)
+            {
+                throw new InvalidDataException("current page and items pr page can't be negative");
+            }
+
+            if ((filter.CurrentPage - 1) * filter.ItemsPrPage >= _doctorRepository.Count())
+            {
+                throw new ArgumentException("no more doctors");
+            }
+
+            var filteredDoctors = _doctorRepository.GetAll(filter);
+
+            if (filteredDoctors.List.Count < 1)
+            {
+                throw new KeyNotFoundException("Could not find doctors that satisfy the filter");
+            }
+            return filteredDoctors;
         }
 
         public Doctor GetById(string email)

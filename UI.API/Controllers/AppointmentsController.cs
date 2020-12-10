@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -26,10 +27,11 @@ namespace UI.API.Controllers
         }
 
         /// <summary>
-        /// Returns a list of all the appointments in the database
+        /// Returns a Filtered list of appointments in the database
         /// </summary>
-        /// <returns>A list of appointments</returns>
-        /// <response code = "200">returns the list of appointments</response>
+        /// <param name="filter"> An object containing filtering information</param>
+        /// <returns>A filtered list of appointments</returns>
+        /// <response code = "200">returns the filtered list of appointments</response>
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
@@ -38,12 +40,11 @@ namespace UI.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet]
-        public ActionResult<List<Appointment>> GetAll()
+        public ActionResult<FilteredList<Appointment>> GetAll([FromQuery] Filter filter)
         {
             try
             {
-                return Ok(_appointmentService.GetAll());
+                return Ok(_appointmentService.GetAll(filter));
 
             }
             catch (DataBaseException ex)

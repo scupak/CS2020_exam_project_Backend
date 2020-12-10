@@ -1,4 +1,6 @@
-﻿namespace Core.Entities.Entities.Filter
+﻿using System;
+
+namespace Core.Entities.Entities.Filter
 {
     /// <summary>
     /// A class that is used to store filtering information. 
@@ -35,5 +37,12 @@
         /// Describes what page the filter is on
         /// </summary>
         public int CurrentPage { get; set; }
+
+        /// <summary>
+        /// Describes the date interval between which the filtered entities datetime should be.
+        /// </summary>
+        public DateTime OrderStartDateTime { get; set; }
+
+        public DateTime OrderStopDateTime { get; set; }
     }
 }

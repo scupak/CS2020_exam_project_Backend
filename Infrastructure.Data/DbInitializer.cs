@@ -72,7 +72,8 @@ namespace Infrastructure.Data
             var appointment1 = context.Add(new Appointment()
             {
               AppointmentDateTime  = DateTime.Now.AddDays(5),
-              DurationInMin = 15
+              DurationInMin = 15,
+              DoctorEmailAddress = "Charlie@gmail.uk",
             }).Entity;
 
             var appointment2 = context.Add(new Appointment()

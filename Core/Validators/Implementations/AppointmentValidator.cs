@@ -20,14 +20,28 @@ namespace Core.Services.Validators.Implementations
             DateValidation(appointment);
             DurationValidator(appointment);
             DescriptionValidator(appointment);
+            EmailValidator(appointment);
+
+        }
+
+        private void EmailValidator(Appointment appointment)
+        {
+            if (appointment.DoctorEmailAddress == null)
+            {
+                throw new ArgumentException("Appointments needs a doctor");
+            }
 
         }
 
         private void DescriptionValidator(Appointment appointment)
         {
-            if (appointment.Description.Length > 280)
+            if (appointment.Description != null)
             {
-                throw new ArgumentException("description is too long");
+
+                if (appointment.Description.Length > 280)
+                {
+                    throw new ArgumentException("description is too long");
+                }
             }
         }
 
@@ -76,6 +90,7 @@ namespace Core.Services.Validators.Implementations
             DateValidation(appointment);
             DurationValidator(appointment);
             DescriptionValidator(appointment);
+            EmailValidator(appointment);
         }
 
         private void EditIdValidation(Appointment appointment)

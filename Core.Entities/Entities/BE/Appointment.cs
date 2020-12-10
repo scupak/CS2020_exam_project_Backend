@@ -11,8 +11,8 @@ namespace Core.Entities.Entities.BE
         public string Description { get; set; }
         #nullable enable
         public string? PatientCpr { get; set; }
-        public string? DoctorEmailAddress { get; set; }
         #nullable disable
+        public string DoctorEmailAddress { get; set; }
         public Doctor Doctor { get; set; }
         public Patient Patient { get; set; }
     }
