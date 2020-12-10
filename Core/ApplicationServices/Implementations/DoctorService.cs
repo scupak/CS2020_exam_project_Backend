@@ -15,7 +15,7 @@ namespace Core.Services.ApplicationServices.Implementations
         private readonly IRepository<Doctor, string> _doctorRepository;
         private readonly IDoctorValidator _doctorValidator;
 
-        public DoctorService(IRepository<Doctor, string> doctorRepository, IRepository<Appointment, int> apppointmentRepository, IDoctorValidator doctorValidator)
+        public DoctorService(IRepository<Doctor, string> doctorRepository, IDoctorValidator doctorValidator)
         {
             _doctorRepository = doctorRepository;
             _doctorValidator = doctorValidator;

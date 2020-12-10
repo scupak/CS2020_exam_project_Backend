@@ -130,6 +130,11 @@ namespace Infrastructure.Data.Repositories
         {
             try
             {
+                if (entity.DoctorEmailAddress == "Doctor@Default.com")
+                {
+                    throw new ArgumentException("cannot create doctor default");
+                }
+
                 var entry = _clinicContext.Add(entity);
                 _clinicContext.SaveChanges();
 
@@ -145,6 +150,11 @@ namespace Infrastructure.Data.Repositories
         {
             try
             {
+                if (entity.DoctorEmailAddress == "Doctor@Default.com")
+                {
+                    throw new ArgumentException("cannot edit doctor default");
+                }
+
                 var entry = _clinicContext.Update(entity);
                 _clinicContext.SaveChanges();
 
@@ -160,6 +170,11 @@ namespace Infrastructure.Data.Repositories
         {
             try
             {
+                if (email == "Doctor@Default.com")
+                {
+                    throw new ArgumentException("cannot delete doctor default");
+                }
+                    
                 if (_clinicContext.Appointments.Any(appointment => appointment.DoctorEmailAddress == email))
                 {
                     if (!_clinicContext.Doctors.Any(doctor => doctor.DoctorEmailAddress == "Doctor@Default.com"))
@@ -172,8 +187,10 @@ namespace Infrastructure.Data.Repositories
                             PhoneNumber = "22222222"
                         };
 
-                        Add(doctorDefault);
+                        _clinicContext.Add(doctorDefault);
+                        _clinicContext.SaveChanges();
                     }
+                    
 
                     if (_clinicContext.Doctors.Any(doctor => doctor.DoctorEmailAddress == "Doctor@Default.com"))
                     {
@@ -182,7 +199,7 @@ namespace Infrastructure.Data.Repositories
 
                         foreach (var appointment in appointmentsToDefault)
                         {
-
+                            appointment.DoctorEmailAddress = "Doctor@Default.com";
                         }
                     }
                     else

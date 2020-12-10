@@ -356,9 +356,7 @@ namespace Infrastructure.UnitTests.ServiceTests
         #region Add
 
         [Theory]
-        [InlineData(15, null, null, null)]
         [InlineData(15, null, "Karl@gmail.com", "011200-4041")]
-        [InlineData(15, null, null, "011200-4041")]
         [InlineData(15, null, "Karl@gmail.com", null)]
         [InlineData(15, "Knee checkup", "Charlie@gmail.uk", "110695-0004")]
         public void Add_WithValidAppointment_ShouldNotThrowException( int durationInMin, string description, string doctorEmailAddress, string patientCpr)
@@ -397,7 +395,6 @@ namespace Infrastructure.UnitTests.ServiceTests
 
         [Theory]
         [InlineData(15, null, "Karl@gmail.com", "011200-4041")]
-        [InlineData(15, null, null, "011200-4041")]
         [InlineData(15, null, "Karl@gmail.com", null)]
         [InlineData(15, "Knee checkup", "Charlie@gmail.uk", "110695-0004")]
         public void Add_MissingRelations_ShouldThrowException(int durationInMin, string description, string doctorEmailAddress, string patientCpr)

@@ -20,6 +20,16 @@ namespace Core.Services.Validators.Implementations
             DateValidation(appointment);
             DurationValidator(appointment);
             DescriptionValidator(appointment);
+            EmailValidator(appointment);
+
+        }
+
+        private void EmailValidator(Appointment appointment)
+        {
+            if (appointment.DoctorEmailAddress == null)
+            {
+                throw new ArgumentException("Appointments needs a doctor");
+            }
 
         }
 
@@ -80,6 +90,7 @@ namespace Core.Services.Validators.Implementations
             DateValidation(appointment);
             DurationValidator(appointment);
             DescriptionValidator(appointment);
+            EmailValidator(appointment);
         }
 
         private void EditIdValidation(Appointment appointment)

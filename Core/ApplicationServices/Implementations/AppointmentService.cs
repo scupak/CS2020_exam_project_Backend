@@ -64,13 +64,11 @@ namespace Core.Services.ApplicationServices.Implementations
         {
             _appointmentValidator.CreateValidation(entity);
 
-            if (entity.DoctorEmailAddress != null)
+            if (_doctorRepository.GetById(entity.DoctorEmailAddress) == null)
             {
-                if (_doctorRepository.GetById(entity.DoctorEmailAddress) == null)
-                {
-                    throw new KeyNotFoundException("This related entity does not exist");
-                }
+                throw new KeyNotFoundException("This related entity does not exist");
             }
+
 
             if (entity.PatientCpr != null)
             {
