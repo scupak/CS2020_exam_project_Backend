@@ -26,8 +26,7 @@ namespace Infrastructure.Data
                 .HasOne<Doctor>(appointment => appointment.Doctor)
                 .WithMany(doctor => doctor.Appointments)
                 .HasForeignKey(appointment => appointment.DoctorEmailAddress)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);
+                .IsRequired(true);
 
             modelBuilder.Entity<Appointment>()
                 .HasOne<Patient>(appointment => appointment.Patient)

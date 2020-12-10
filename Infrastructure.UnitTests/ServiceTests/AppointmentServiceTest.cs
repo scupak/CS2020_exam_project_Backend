@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Implementations;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
@@ -59,14 +62,19 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _appointmentRepoMock
                 .Setup(repo => repo
-                    .GetAll())
-                .Returns(() => _allAppointments.Values.ToList());
-
+                    .GetAll(It.IsAny<Filter>()))
+                .Returns<Filter>((filter) => new FilteredList<Appointment>(){List = _allAppointments.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter});
+            
             _appointmentRepoMock
                 .Setup(repo => repo
                     .GetById(It.IsAny<int>()))
                 .Returns<int>((id) => _allAppointments
                     .ContainsKey(id) ? _allAppointments[id] : null);
+
+            _appointmentRepoMock
+                .Setup(repo => repo
+                    .Count())
+                .Returns(() => _allAppointments.Count);
             #endregion
 
             #region Doctor
@@ -99,14 +107,19 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _doctorRepoMock
                 .Setup(repo => repo
-                    .GetAll())
-                .Returns(() => _allDoctors.Values.ToList());
+                    .GetAll(It.IsAny<Filter>()))
+                .Returns<Filter>((filter) => new FilteredList<Doctor>() { List = _allDoctors.Values.ToList(), TotalCount = _allDoctors.Count, FilterUsed = filter });
 
             _doctorRepoMock
                 .Setup(repo => repo
                     .GetById(It.IsAny<string>()))
                 .Returns<string>((email) => _allDoctors
                     .ContainsKey(email) ? _allDoctors[email] : null);
+
+            _doctorRepoMock
+                .Setup(repo => repo
+                    .Count())
+                .Returns(() => _allDoctors.Count);
             #endregion
 
             #region patient
@@ -141,8 +154,8 @@ namespace Infrastructure.UnitTests.ServiceTests
 
             _patientRepoMock
                 .Setup(repo => repo
-                    .GetAll())
-                .Returns(() => _allPatients.Values.ToList());
+                    .GetAll(It.IsAny<Filter>()))
+                .Returns<Filter>((filter) => new FilteredList<Patient>() { List = _allPatients.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter });
 
             _patientRepoMock
                 .Setup(repo => repo
@@ -152,6 +165,10 @@ namespace Infrastructure.UnitTests.ServiceTests
                     ? _allPatients[CPR]
                     : null);
 
+            _patientRepoMock
+                .Setup(repo => repo
+                    .Count())
+                .Returns(() => _allPatients.Count);
             #endregion
 
         }
@@ -191,34 +208,96 @@ namespace Infrastructure.UnitTests.ServiceTests
 
         #region GetAll
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(2)]
-        public void GetAllDoctors(int appointmentCount)
+        [Fact]
+        public void GetAllAppointmentsTest_ShouldNotThrowException()
         {
             //arrange
             Appointment a1 = new Appointment() { AppointmentId = 1};
             Appointment a2 = new Appointment(){AppointmentId = 2};
             var appointments = new List<Appointment>() { a1, a2 };
 
-            // the doctors in the repository
-            var expected = appointments.GetRange(0, appointmentCount);
-            foreach (var a in expected)
-            {
-                _allAppointments.Add(a.AppointmentId, a);
-            }
+            Filter filter = new Filter() {};
 
+            _allAppointments.Add(a1.AppointmentId, a1);
+            _allAppointments.Add(a2.AppointmentId, a2);
+            // the doctors in the repository
+            var expected = new FilteredList<Appointment>()
+                {List = _allAppointments.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter};
+            
+
+            expected.TotalCount = _allAppointments.Count;
             var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
 
             // act
-            var result = service.GetAll();
+            var result = service.GetAll(filter);
 
             // assert
-            Assert.Equal(expected, result);
-            _appointmentRepoMock.Verify(repo => repo.GetAll(), Times.Once);
+           Assert.Equal(expected.List, result.List);
+            _appointmentRepoMock.Verify(repo => repo.GetAll(It.Is<Filter>(aFilter => aFilter == filter)), Times.Once);
 
         }
+
+        [Fact]
+        public void GetAllAppointmentsNegativPaggingTest_ShouldThrowException()
+        {
+            //arrange
+            Appointment a1 = new Appointment() { AppointmentId = 1 };
+            Appointment a2 = new Appointment() { AppointmentId = 2 };
+            var appointments = new List<Appointment>() { a1, a2 };
+
+            Filter filter = new Filter() {CurrentPage = -1};
+
+            _allAppointments.Add(a1.AppointmentId, a1);
+            _allAppointments.Add(a2.AppointmentId, a2);
+            // the doctors in the repository
+            var expected = new FilteredList<Appointment>()
+                { List = _allAppointments.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter };
+
+
+            expected.TotalCount = _allAppointments.Count;
+            var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
+
+            // act
+            Action action = () => service.GetAll(filter);
+
+            // assert
+            action.Should().Throw<InvalidDataException>()
+                .WithMessage("current page and items pr page can't be negative");
+            _appointmentRepoMock.Verify(repo => repo.GetAll(It.Is<Filter>(aFilter => aFilter == filter)), Times.Never);
+
+        }
+
+        [Fact]
+        public void GetAllAppointmentsIndexOutOfBounds_ShouldThrowException()
+        {
+            //arrange
+            Appointment a1 = new Appointment() { AppointmentId = 1 };
+            Appointment a2 = new Appointment() { AppointmentId = 2 };
+            Appointment a3 = new Appointment() { AppointmentId = 3 };
+
+            Filter filter = new Filter() { CurrentPage = 2, ItemsPrPage = 3};
+
+            _allAppointments.Add(a1.AppointmentId, a1);
+            _allAppointments.Add(a2.AppointmentId, a2);
+            _allAppointments.Add(a3.AppointmentId, a3);
+            // the doctors in the repository
+            var expected = new FilteredList<Appointment>()
+                { List = _allAppointments.Values.ToList(), TotalCount = _allAppointments.Count, FilterUsed = filter };
+
+
+            expected.TotalCount = _allAppointments.Count;
+            var service = new AppointmentService(_appointmentRepoMock.Object, _doctorRepoMock.Object, _patientRepoMock.Object, _appointmentValidatorMock.Object);
+
+            // act
+            Action action = () => service.GetAll(filter);
+
+            // assert
+            action.Should().Throw<ArgumentException>()
+                .WithMessage("no more appointments");
+            _appointmentRepoMock.Verify(repo => repo.GetAll(It.Is<Filter>(aFilter => aFilter == filter)), Times.Never);
+
+        }
+
 
         #endregion
 
@@ -277,9 +356,7 @@ namespace Infrastructure.UnitTests.ServiceTests
         #region Add
 
         [Theory]
-        [InlineData(15, null, null, null)]
         [InlineData(15, null, "Karl@gmail.com", "011200-4041")]
-        [InlineData(15, null, null, "011200-4041")]
         [InlineData(15, null, "Karl@gmail.com", null)]
         [InlineData(15, "Knee checkup", "Charlie@gmail.uk", "110695-0004")]
         public void Add_WithValidAppointment_ShouldNotThrowException( int durationInMin, string description, string doctorEmailAddress, string patientCpr)
@@ -318,7 +395,6 @@ namespace Infrastructure.UnitTests.ServiceTests
 
         [Theory]
         [InlineData(15, null, "Karl@gmail.com", "011200-4041")]
-        [InlineData(15, null, null, "011200-4041")]
         [InlineData(15, null, "Karl@gmail.com", null)]
         [InlineData(15, "Knee checkup", "Charlie@gmail.uk", "110695-0004")]
         public void Add_MissingRelations_ShouldThrowException(int durationInMin, string description, string doctorEmailAddress, string patientCpr)

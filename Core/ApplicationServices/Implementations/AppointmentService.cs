@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.DomainServices;
 using Core.Services.Validators.Interfaces;
@@ -21,9 +25,25 @@ namespace Core.Services.ApplicationServices.Implementations
             _appointmentValidator = appointmentValidator;
         }
 
-        public List<Appointment> GetAll()
+        public FilteredList<Appointment> GetAll(Filter filter)
         {
-            return _appointmentRepository.GetAll();
+            if (filter.CurrentPage < 0 || filter.ItemsPrPage < 0)
+            {
+                throw new InvalidDataException("current page and items pr page can't be negative");
+            }
+
+            if ((filter.CurrentPage - 1) * filter.ItemsPrPage >= _appointmentRepository.Count())
+            {
+                throw new ArgumentException("no more appointments");
+            }
+
+            var filteredAppointments = _appointmentRepository.GetAll(filter);
+
+            if (filteredAppointments.List.Count < 1)
+            {
+                throw new KeyNotFoundException("Could not find appointments that satisfy the filter");
+            }
+            return filteredAppointments;
         }
 
         public Appointment GetById(int id)
@@ -45,13 +65,11 @@ namespace Core.Services.ApplicationServices.Implementations
         {
             _appointmentValidator.CreateValidation(entity);
 
-            if (entity.DoctorEmailAddress != null)
+            if (_doctorRepository.GetById(entity.DoctorEmailAddress) == null)
             {
-                if (_doctorRepository.GetById(entity.DoctorEmailAddress) == null)
-                {
-                    throw new KeyNotFoundException("This related entity does not exist");
-                }
+                throw new KeyNotFoundException("This related entity does not exist");
             }
+
 
             if (entity.PatientCpr != null)
             {
@@ -59,6 +77,26 @@ namespace Core.Services.ApplicationServices.Implementations
                 {
                     throw new KeyNotFoundException("This related entity does not exist");
                 }
+            }
+
+            Filter filter = new Filter()
+            {
+                SearchField = "DoctorEmailAddress",
+                SearchText = entity.DoctorEmailAddress
+            };
+
+            List<Appointment> filtering = _appointmentRepository.GetAll(filter).List;
+            IEnumerable<Appointment> reFiltering;
+
+
+            reFiltering = filtering.Where(appointment => 
+                (appointment.AppointmentDateTime <= entity.AppointmentDateTime.AddMinutes(entity.DurationInMin))
+                && 
+                (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= entity.AppointmentDateTime));
+
+            if (reFiltering.Any())
+            {
+                throw new ArgumentException("An appointment for this doctor in this time-frame is already taken");
             }
 
             return _appointmentRepository.Add(entity);
@@ -89,6 +127,27 @@ namespace Core.Services.ApplicationServices.Implementations
                 {
                     throw new KeyNotFoundException("This related entity does not exist");
                 }
+            }
+
+            Filter filter = new Filter()
+            {
+                SearchField = "DoctorEmailAddress",
+                SearchText = entity.DoctorEmailAddress
+            };
+
+            List<Appointment> filtering = _appointmentRepository.GetAll(filter).List;
+            IEnumerable<Appointment> reFiltering;
+
+
+            reFiltering = filtering.Where(appointment => appointment.AppointmentId != entity.AppointmentId)
+                .Where(appointment =>
+                (appointment.AppointmentDateTime <= entity.AppointmentDateTime.AddMinutes(entity.DurationInMin))
+                &&
+                (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= entity.AppointmentDateTime));
+
+            if (reFiltering.Any())
+            {
+                throw new ArgumentException("An appointment for this doctor in this time-frame is already taken");
             }
 
 

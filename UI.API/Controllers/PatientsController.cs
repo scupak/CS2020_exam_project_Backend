@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.Filter;
 using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -27,11 +28,11 @@ namespace UI.API.Controllers
         // GET: api/<PatientsController>
         [Authorize(Roles = "Administrator, Doctor")]
         [HttpGet]
-        public ActionResult<Patient> Get()
+        public ActionResult<FilteredList<Patient>> GetAll([FromQuery] Filter filter)
         {
             try
             {
-                return Ok(PatientService.GetAll());
+                return Ok(PatientService.GetAll(filter));
             }
             catch (DataBaseException ex)
             {
@@ -61,7 +62,7 @@ namespace UI.API.Controllers
 
         // GET api/<PatientsController>/5
         [HttpGet("{id}")]
-        public ActionResult<Patient> Get(string id)
+        public ActionResult<Patient> GetById(string id)
         {
             try
             {
@@ -102,7 +103,7 @@ namespace UI.API.Controllers
 
         // POST api/<PatientsController>
         [HttpPost]
-        public ActionResult<Patient>Post([FromBody] Patient patient)
+        public ActionResult<Patient>Add([FromBody] Patient patient)
         {
             try
             {
@@ -136,7 +137,7 @@ namespace UI.API.Controllers
 
         // PUT api/<PatientsController>/5
         [HttpPut]
-        public ActionResult<Patient> Put( [FromBody] Patient patient)
+        public ActionResult<Patient> Edit( [FromBody] Patient patient)
         {
             try
             {
@@ -185,7 +186,7 @@ namespace UI.API.Controllers
 
         // DELETE api/<PatientsController>/5
         [HttpDelete("{id}")]
-        public ActionResult<Patient> Delete(string id)
+        public ActionResult<Patient> Remove(string id)
         {
             try
             {
