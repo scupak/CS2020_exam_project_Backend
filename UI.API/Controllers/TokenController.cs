@@ -40,7 +40,7 @@ namespace UI.API.Controllers
                 //check if the username is a valid email. 
                 _doctorValidator.ValidateEmail(model.Username);
                 //get the doctor
-                Doctor doctor = _doctorService.GetAll().FirstOrDefault(doc => doc.DoctorEmailAddress == model.Username);
+                Doctor doctor = _doctorService.GetById(model.Username);
 
                 // check if doctor exists
                 if (doctor == null)
@@ -70,8 +70,7 @@ namespace UI.API.Controllers
                     _PatientValidator.ValidateCPR(model.Username);
 
                     //get the patient
-                    Patient patient = PatientService.GetAll()
-                        .FirstOrDefault(p => p.PatientCPR == model.Username);
+                    Patient patient = PatientService.GetById(model.Username);
 
                     // check if patient exists
                     if (patient == null)
