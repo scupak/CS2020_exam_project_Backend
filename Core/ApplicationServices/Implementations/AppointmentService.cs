@@ -129,6 +129,27 @@ namespace Core.Services.ApplicationServices.Implementations
                 }
             }
 
+            Filter filter = new Filter()
+            {
+                SearchField = "DoctorEmailAddress",
+                SearchText = entity.DoctorEmailAddress
+            };
+
+            List<Appointment> filtering = _appointmentRepository.GetAll(filter).List;
+            IEnumerable<Appointment> reFiltering;
+
+
+            reFiltering = filtering.Where(appointment => appointment.AppointmentId != entity.AppointmentId)
+                .Where(appointment =>
+                (appointment.AppointmentDateTime <= entity.AppointmentDateTime.AddMinutes(entity.DurationInMin))
+                &&
+                (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= entity.AppointmentDateTime));
+
+            if (reFiltering.Any())
+            {
+                throw new ArgumentException("An appointment for this doctor in this time-frame is already taken");
+            }
+
 
             return _appointmentRepository.Edit(entity);
         }
