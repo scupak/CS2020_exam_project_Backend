@@ -165,13 +165,26 @@ namespace UI.API.Controllers
 
         // PUT api/<PatientsController>/5
         [HttpPut]
-        public ActionResult<Patient> Edit( [FromBody] Patient patient)
+        public ActionResult<Patient> Edit( [FromBody] PatientDTO patientDTO)
         {
             try
             {
+                PatientValidator.ValidatePassword(patientDTO.Password);
 
+                byte[] passwordHash, passwordSalt;
 
+                authenticationHelper.CreatePasswordHash(patientDTO.Password, out passwordHash, out passwordSalt);
 
+                Patient patient = new Patient
+                {
+                    PatientCPR = patientDTO.PatientCPR,
+                    PatientFirstName = patientDTO.PatientFirstName,
+                    PatientLastName = patientDTO.PatientLastName,
+                    PatientEmail = patientDTO.PatientEmail,
+                    PatientPhone = patientDTO.PatientPhone,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                };
                 
                 Patient returnpatient = PatientService.Edit(patient);
 
