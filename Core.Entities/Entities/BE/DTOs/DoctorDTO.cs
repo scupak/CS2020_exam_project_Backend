@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Core.Entities.Entities.BE.DTOs
 {
-    class DoctorDTO
+  public class DoctorDTO
     {
         public string DoctorEmailAddress { get; set; }
         public string FirstName { get; set; }

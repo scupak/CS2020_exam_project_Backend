@@ -103,5 +103,13 @@ namespace Core.Services.Validators.Implementations
 
 
         }
+
+        public void ValidatePassword(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentException("a Patient needs a valid password");
+            }
+        }
     }
 }
