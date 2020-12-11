@@ -86,8 +86,11 @@ namespace Core.Services.ApplicationServices.Implementations
                 throw new ArgumentException("A doctor with this email does not exist");
             }
 
+            /*
+
             entity.PasswordHash = previousDoctor.PasswordHash;
             entity.PasswordSalt = previousDoctor.PasswordSalt;
+            */
 
             Doctor doctor = _doctorRepository.Edit(entity);
             return doctor;

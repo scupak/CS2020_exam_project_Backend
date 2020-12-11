@@ -201,10 +201,26 @@ namespace UI.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Doctor> Edit([FromBody] Doctor doctor)
+        public ActionResult<Doctor> Edit([FromBody] DoctorDTO doctorDTO)
         {
             try
             {
+                _doctorValidator.ValidatePassword(doctorDTO.Password);
+
+                byte[] passwordHash, passwordSalt;
+
+                _authHelper.CreatePasswordHash(doctorDTO.Password, out passwordHash, out passwordSalt);
+
+                Doctor doctor = new Doctor
+                {
+                    DoctorEmailAddress = doctorDTO.DoctorEmailAddress,
+                    FirstName = doctorDTO.FirstName,
+                    LastName = doctorDTO.LastName,
+                    PhoneNumber = doctorDTO.PhoneNumber,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                };
+
                 return Ok(_doctorService.Edit(doctor));
             }
             catch (DataBaseException ex)
