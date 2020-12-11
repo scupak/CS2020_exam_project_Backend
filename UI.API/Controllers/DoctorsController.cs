@@ -4,9 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.BE.DTOs;
 using Core.Entities.Entities.Filter;
 using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
+using Core.Services.Validators.Interfaces;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,10 +21,15 @@ namespace UI.API.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IService<Doctor, string> _doctorService;
+        private IDoctorValidator _doctorValidator;
+        private IAuthenticationHelper _authHelper;
 
-        public DoctorsController(IService<Doctor, string> doctorService)
+
+        public DoctorsController(IService<Doctor, string> doctorService, IDoctorValidator doctorValidator, IAuthenticationHelper authHelper)
         {
             _doctorService = doctorService;
+            _doctorValidator = doctorValidator;
+            _authHelper = authHelper;
         }
 
         /// <summary>
@@ -132,10 +140,25 @@ namespace UI.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Doctor> Add([FromBody] Doctor doctor)
+        public ActionResult<Doctor> Add([FromBody] DoctorDTO doctorDTO)
         {
             try
             {
+                _doctorValidator.ValidatePassword(doctorDTO.Password);
+
+                byte[] passwordHash, passwordSalt;
+
+                _authHelper.CreatePasswordHash(doctorDTO.Password, out passwordHash, out passwordSalt);
+
+                Doctor doctor = new Doctor
+                {
+                    DoctorEmailAddress = doctorDTO.DoctorEmailAddress,
+                    FirstName = doctorDTO.FirstName,
+                    LastName = doctorDTO.LastName,
+                    PhoneNumber = doctorDTO.PhoneNumber,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                };
                 return Ok(_doctorService.Add(doctor));
             }
             catch (DataBaseException ex)
