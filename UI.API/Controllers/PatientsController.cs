@@ -36,7 +36,7 @@ namespace UI.API.Controllers
 
         // GET: api/<PatientsController>
         //temp disable for testing.
-        //[Authorize(Roles = "Administrator, Doctor")]
+        [Authorize(Roles = "Administrator, Doctor")]
         [HttpGet]
         public ActionResult<FilteredList<Patient>> GetAll([FromQuery] Filter filter)
         {
