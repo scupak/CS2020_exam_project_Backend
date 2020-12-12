@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace UI.API.Controllers
 {
-    [Route("/token")]
+    [Route("api/token")]
     [ApiController]
     public class TokenController : Controller
     {
