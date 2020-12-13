@@ -29,6 +29,16 @@ namespace Core.Entities.Entities.Filter
         public string SearchField { get; set; }
 
         /// <summary>
+        /// describes the value of the second field on witch the search should be performed
+        /// </summary>
+        public string SearchText2 { get; set; }
+
+        /// <summary>
+        /// Describes which field of the object the second search should be based on 
+        /// </summary>
+        public string SearchField2 { get; set; }
+
+        /// <summary>
         /// Describes how many objects should be displayed per page
         /// </summary>
         public int ItemsPrPage { get; set; }
