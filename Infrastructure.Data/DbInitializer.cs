@@ -122,7 +122,30 @@ namespace Infrastructure.Data
                 Description = "Knee checkup"
             }).Entity;
 
+            /*
+            DateTime begin = DateTime.Today;
+
+            DateTime end = DateTime.Today.AddDays(30);
+
+
+            for(DateTime date = begin; date <= end; date = date.AddDays(1))
+            {
+                foreach (Doctor doctor in context.Doctors)
+                {
+
+
+
+                }
+
+            }
+            */
+
+
+
+
             context.SaveChanges();
         }
+
+
     }
 }
