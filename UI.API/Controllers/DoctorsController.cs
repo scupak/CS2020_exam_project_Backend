@@ -158,6 +158,7 @@ namespace UI.API.Controllers
                     PhoneNumber = doctorDTO.PhoneNumber,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
+                    IsAdmin = doctorDTO.IsAdmin
                 };
                 return Ok(_doctorService.Add(doctor));
             }
