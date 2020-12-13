@@ -73,5 +73,13 @@ namespace Core.Services.Validators.Implementations
                 throw new ArgumentException("This is not a valid email address");
             }
         }
+
+        public void ValidatePassword(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentException("a doctor needs a valid password");
+            }
+        }
     }
 }

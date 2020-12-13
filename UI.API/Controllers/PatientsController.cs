@@ -4,9 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
+using Core.Entities.Entities.BE.DTOs;
 using Core.Entities.Entities.Filter;
 using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
+using Core.Services.Validators.Interfaces;
+using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,12 +23,20 @@ namespace UI.API.Controllers
     {
         private IService<Patient, string> PatientService;
 
-        public PatientsController(IService<Patient, string> patientService)
+        private IPatientValidator PatientValidator;
+
+        private IAuthenticationHelper authenticationHelper;
+
+        public PatientsController(IService<Patient, string> patientService, IPatientValidator patientValidator, IAuthenticationHelper authHelper)
         {
             PatientService = patientService;
+            PatientValidator = patientValidator;
+            authenticationHelper = authHelper;
         }
 
         // GET: api/<PatientsController>
+        //temp disable for testing.
+        [Authorize(Roles = "Administrator, Doctor")]
         [HttpGet]
         public ActionResult<FilteredList<Patient>> GetAll([FromQuery] Filter filter)
         {
@@ -101,10 +113,28 @@ namespace UI.API.Controllers
 
         // POST api/<PatientsController>
         [HttpPost]
-        public ActionResult<Patient>Add([FromBody] Patient patient)
+        public ActionResult<Patient>Add([FromBody] PatientDTO patientDTO)
         {
             try
             {
+                PatientValidator.ValidatePassword(patientDTO.Password);
+
+                byte[] passwordHash, passwordSalt;
+
+                authenticationHelper.CreatePasswordHash(patientDTO.Password, out passwordHash, out passwordSalt);
+
+                Patient patient = new Patient
+                {
+                    PatientCPR = patientDTO.PatientCPR,
+                    PatientFirstName = patientDTO.PatientFirstName,
+                    PatientLastName = patientDTO.PatientLastName,
+                    PatientEmail = patientDTO.PatientEmail,
+                    PatientPhone = patientDTO.PatientPhone, 
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                };
+
+                
                 return string.IsNullOrEmpty(patient.PatientFirstName) ? BadRequest("FirstName is required to create a patient") : StatusCode(201, PatientService.Add(patient));
             }
             catch (DataBaseException ex)
@@ -135,12 +165,26 @@ namespace UI.API.Controllers
 
         // PUT api/<PatientsController>/5
         [HttpPut]
-        public ActionResult<Patient> Edit( [FromBody] Patient patient)
+        public ActionResult<Patient> Edit( [FromBody] PatientDTO patientDTO)
         {
             try
             {
+                PatientValidator.ValidatePassword(patientDTO.Password);
 
+                byte[] passwordHash, passwordSalt;
 
+                authenticationHelper.CreatePasswordHash(patientDTO.Password, out passwordHash, out passwordSalt);
+
+                Patient patient = new Patient
+                {
+                    PatientCPR = patientDTO.PatientCPR,
+                    PatientFirstName = patientDTO.PatientFirstName,
+                    PatientLastName = patientDTO.PatientLastName,
+                    PatientEmail = patientDTO.PatientEmail,
+                    PatientPhone = patientDTO.PatientPhone,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                };
                 
                 Patient returnpatient = PatientService.Edit(patient);
 

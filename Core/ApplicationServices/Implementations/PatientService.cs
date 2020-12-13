@@ -79,9 +79,10 @@ namespace Core.Services.ApplicationServices.Implementations
                
             }
 
+            /*
             entity.PasswordHash = previousPatient.PasswordHash;
             entity.PasswordSalt = previousPatient.PasswordSalt;
-
+            */
             return _patientRepository.Edit(entity);
         }
 

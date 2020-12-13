@@ -5,17 +5,37 @@ namespace Infrastructure.Data
 {
     public class DbInitializer : IDbInitializer
     {
+        private IAuthenticationHelper authenticationHelper;
+
+        public DbInitializer(IAuthenticationHelper authHelper)
+        {
+            authenticationHelper = authHelper;
+        }
+
         public void Initialize(ClinicContext context)
         {
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
+
+            // Create two users with hashed and salted passwords
+            string password = "1234";
+
+            byte[] passwordHashKarl, passwordSaltKarl, passwordHashCharlie, passwordSaltCharlie, passwordHashAnne, passwordSaltAnne, passwordHashfrank, passwordSaltfrank, passwordHashGeorge, passwordSaltGeorge ,passwordHashKermit, passwordSaltKermit;
+            authenticationHelper.CreatePasswordHash(password, out passwordHashKarl, out passwordSaltKarl);
+            authenticationHelper.CreatePasswordHash(password, out passwordHashCharlie, out passwordSaltCharlie);
+            authenticationHelper.CreatePasswordHash(password, out passwordHashAnne, out passwordSaltAnne);
+            authenticationHelper.CreatePasswordHash(password, out passwordHashfrank, out passwordSaltfrank);
+            authenticationHelper.CreatePasswordHash(password, out passwordHashGeorge, out passwordSaltGeorge);
+            authenticationHelper.CreatePasswordHash(password, out passwordHashKermit, out passwordSaltKermit);
 
             var doctor1 = context.Add(new Doctor()
             {
                 FirstName = "Karl",
                 LastName = "Stevenson",
                 DoctorEmailAddress= "Karl@gmail.com",
-                PhoneNumber = "23418957"
+                PhoneNumber = "23418957",
+                PasswordHash = passwordHashKarl,
+                PasswordSalt = passwordSaltKarl,
 
             }).Entity;
 
@@ -25,7 +45,9 @@ namespace Infrastructure.Data
                 LastName = "Holmes",
                 DoctorEmailAddress = "Charlie@gmail.uk",
                 PhoneNumber = "87901234",
-                IsAdmin = false
+                IsAdmin = false,
+                PasswordHash = passwordHashCharlie,
+                PasswordSalt = passwordSaltCharlie,
 
             }).Entity;
 
@@ -35,7 +57,9 @@ namespace Infrastructure.Data
                 LastName = "Gorky",
                 DoctorEmailAddress = "Anne@Yahoo.Ru",
                 PhoneNumber = "45671289",
-                IsAdmin = true
+                IsAdmin = true,
+                PasswordHash = passwordHashAnne,
+                PasswordSalt = passwordSaltAnne,
 
             }).Entity;
 
@@ -45,7 +69,9 @@ namespace Infrastructure.Data
                 PatientFirstName = "frank",
                 PatientLastName = "michel",
                 PatientEmail = "frank@hotmail.com",
-                PatientPhone = "45301210"
+                PatientPhone = "45301210", 
+                PasswordHash = passwordHashfrank,
+                PasswordSalt = passwordSaltfrank,
 
             }).Entity;
 
@@ -65,7 +91,10 @@ namespace Infrastructure.Data
                 PatientFirstName = "Kermit",
                 PatientLastName = "Holland",
                 PatientEmail = "Kermit@gmail.com",
-                PatientPhone = "98761234"
+                PatientPhone = "98761234",
+                PasswordHash = passwordHashKermit,
+                PasswordSalt = passwordSaltKermit,
+
 
             }).Entity;
 
@@ -92,6 +121,24 @@ namespace Infrastructure.Data
                 PatientCpr = "110695-0004",
                 Description = "Knee checkup"
             }).Entity;
+
+            /*
+            DateTime begin = DateTime.Today;
+
+            DateTime end = DateTime.Today.AddDays(30);
+
+
+            for(DateTime date = begin; date <= end; date = date.AddDays(1))
+            {
+                foreach (Doctor doctor in context.Doctors)
+                {
+
+
+
+                }
+
+            }
+            */
 
             var appointment4 = context.Add(new Appointment()
             {
@@ -120,5 +167,7 @@ namespace Infrastructure.Data
 
             context.SaveChanges();
         }
+
+
     }
 }
