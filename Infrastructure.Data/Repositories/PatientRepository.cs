@@ -45,31 +45,162 @@ namespace Infrastructure.Data.Repositories
 
 
 
-                if (!string.IsNullOrEmpty(filter.SearchText))
+                if (!string.IsNullOrEmpty(filter.SearchField))
                 {
                     switch (filter.SearchField)
                     {
                         case "PatientFirstName":
-                            filtering = filtering.Where(patient =>
-                                patient.PatientFirstName.Contains(filter.SearchText));
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientFirstName == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientFirstName.Contains(filter.SearchText));
+                            }
+
                             break;
 
                         case "PatientLastName":
-                            filtering = filtering.Where(patient =>
-                                patient.PatientLastName.Contains(filter.SearchText));
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientLastName == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientLastName.Contains(filter.SearchText));
+                            }
+
                             break;
 
                         case "PatientCpr":
-                            filtering = filtering.Where(patient =>
-                                patient.PatientCPR.Contains(filter.SearchText));
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientCPR == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientCPR.Contains(filter.SearchText));
+                            }
+
                             break;
                         case "PatientPhone":
-                            filtering = filtering.Where(patient =>
-                                patient.PatientPhone.Contains(filter.SearchText));
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientPhone == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientPhone.Contains(filter.SearchText));
+                            }
+                                
                             break;
                         case "PatientEmail":
-                            filtering = filtering.Where(patient =>
-                                patient.PatientEmail.Contains(filter.SearchText));
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientEmail == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientEmail.Contains(filter.SearchText));
+                            }
+                           
+                            break;
+                        default:
+                            throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding patient property");
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(filter.SearchField2))
+                {
+                    switch (filter.SearchField2)
+                    {
+                        case "PatientFirstName":
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientFirstName == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientFirstName.Contains(filter.SearchText2));
+                            }
+
+                            break;
+
+                        case "PatientLastName":
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientLastName == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientLastName.Contains(filter.SearchText2));
+                            }
+
+                            break;
+
+                        case "PatientCpr":
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientCPR == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientCPR.Contains(filter.SearchText2));
+                            }
+
+                            break;
+                        case "PatientPhone":
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientPhone == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientPhone.Contains(filter.SearchText2));
+                            }
+
+                            break;
+                        case "PatientEmail":
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering
+                                    .Where(patient => patient.PatientEmail == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(patient =>
+                                    patient.PatientEmail.Contains(filter.SearchText2));
+                            }
+
                             break;
                         default:
                             throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding patient property");

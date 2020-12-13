@@ -140,8 +140,30 @@ namespace Infrastructure.Data
             }
             */
 
+            var appointment4 = context.Add(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(5),
+                DurationInMin = 15,
+                DoctorEmailAddress = "Charlie@gmail.uk",
+                PatientCpr = "011200-4041"
+            }).Entity;
 
+            var appointment5 = context.Add(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(3),
+                DurationInMin = 15,
+                DoctorEmailAddress = "Karl@gmail.com",
+                PatientCpr = "110695-0004",
+            }).Entity;
 
+            var appointment6 = context.Add(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(3),
+                DurationInMin = 15,
+                DoctorEmailAddress = "Charlie@gmail.uk",
+                PatientCpr = "230207-5118",
+                Description = "Knee checkup"
+            }).Entity;
 
             context.SaveChanges();
         }

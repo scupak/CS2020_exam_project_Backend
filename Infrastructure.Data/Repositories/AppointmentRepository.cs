@@ -24,6 +24,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 int searchInt;
+                int searchInt2;
 
                 var filteredList = new FilteredList<Appointment>();
                 IEnumerable<Appointment> filtering;
@@ -45,7 +46,7 @@ namespace Infrastructure.Data.Repositories
 
                 
 
-                if (!string.IsNullOrEmpty(filter.SearchText))
+                if (!string.IsNullOrEmpty(filter.SearchField))
                 {
                     switch (filter.SearchField)
                     {
@@ -61,21 +62,114 @@ namespace Infrastructure.Data.Repositories
                             break;
 
                         case "Description":
-                            filtering = filtering.Where(appointment =>
-                                appointment.Description != null).Where(appointment =>
-                                appointment.Description.Contains(filter.SearchText));
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering.Where(appointment => appointment.Description == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(appointment =>
+                                    appointment.Description != null).Where(appointment =>
+                                    appointment.Description.Contains(filter.SearchText));
+                            }
+                           
                             break;
 
                         case "DoctorEmailAddress":
-                            
-                            filtering = filtering.Where(appointment =>
-                                appointment.DoctorEmailAddress != null)
-                                .Where(appointment => appointment.DoctorEmailAddress.Contains(filter.SearchText));
+
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering.Where(appointment => appointment.DoctorEmailAddress == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(appointment =>
+                                        appointment.DoctorEmailAddress != null)
+                                    .Where(appointment => appointment.DoctorEmailAddress.Contains(filter.SearchText));
+                            }
+
                             break;
 
                         case "PatientCpr":
-                            filtering = filtering.Where(appointment => appointment.PatientCpr != null)
-                                .Where(appointment => appointment.PatientCpr.Contains(filter.SearchText));
+
+                            if (string.IsNullOrEmpty(filter.SearchText) || filter.SearchText == "null" ||
+                                filter.SearchText == "Null" || filter.SearchText == "empty")
+                            {
+                                filtering = filtering.Where(appointment => appointment.PatientCpr == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(appointment => appointment.PatientCpr != null)
+                                    .Where(appointment => appointment.PatientCpr.Contains(filter.SearchText));
+                            }
+                            
+                            break;
+                        default:
+                            throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding appointment property");
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(filter.SearchField2))
+                {
+                    switch (filter.SearchField2)
+                    {
+                        case "DurationInMin":
+                            if (int.TryParse(filter.SearchText2, out searchInt2))
+                            {
+                                filtering = filtering.Where(appointment => appointment.DurationInMin.Equals(searchInt2));
+                            }
+                            else
+                            {
+                                throw new InvalidDataException("Wrong input, has to be a valid int");
+                            }
+                            break;
+
+                        case "Description":
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering.Where(appointment => appointment.Description == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(appointment =>
+                                    appointment.Description != null).Where(appointment =>
+                                    appointment.Description.Contains(filter.SearchText2));
+                            }
+
+                            break;
+
+                        case "DoctorEmailAddress":
+
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering.Where(appointment => appointment.DoctorEmailAddress == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(appointment =>
+                                        appointment.DoctorEmailAddress != null)
+                                    .Where(appointment => appointment.DoctorEmailAddress.Contains(filter.SearchText2));
+                            }
+
+                            break;
+
+                        case "PatientCpr":
+
+                            if (string.IsNullOrEmpty(filter.SearchText2) || filter.SearchText2 == "null" ||
+                                filter.SearchText2 == "Null" || filter.SearchText2 == "empty")
+                            {
+                                filtering = filtering.Where(appointment => appointment.PatientCpr == null);
+                            }
+                            else
+                            {
+                                filtering = filtering.Where(appointment => appointment.PatientCpr != null)
+                                    .Where(appointment => appointment.PatientCpr.Contains(filter.SearchText2));
+                            }
+
                             break;
                         default:
                             throw new InvalidDataException("Wrong Search-field input, search-field has to match a corresponding appointment property");
