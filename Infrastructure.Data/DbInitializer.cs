@@ -188,6 +188,22 @@ namespace Infrastructure.Data
 
                
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 /* if (clinicContext.Doctors.First(doctor => doctor.DoctorEmailAddress.Contains("Karl@gmail.com")) != null)
                  {
                      clinicContext.AddRange(
