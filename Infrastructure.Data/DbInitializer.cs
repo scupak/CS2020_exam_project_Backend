@@ -196,11 +196,7 @@ namespace Infrastructure.Data
 
             var appointment9 = context.Add(new Appointment()
             {
-<<<<<<< Updated upstream
-                AppointmentDateTime = DateTime.Now.AddDays(3),
-=======
                 AppointmentDateTime = DateTime.Today.AddDays(4),
->>>>>>> Stashed changes
                 DurationInMin = 15,
                 DoctorEmailAddress = "Karl@gmail.com",
             }).Entity;
