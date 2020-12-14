@@ -127,7 +127,7 @@ namespace UI.API
                 options.AddPolicy(name: "ClinicBookingAppAllowSpecificOrigins",
                     builder =>
                     {
-                        builder.WithOrigins("Placeholder for azure app url", "Placeholder for azure app url")
+                        builder.WithOrigins("http://clinicbookingwebapp.azurewebsites.net", "https://clinicbookingwebapp.azurewebsites.net")
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
