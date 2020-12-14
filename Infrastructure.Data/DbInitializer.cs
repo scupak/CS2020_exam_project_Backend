@@ -174,7 +174,7 @@ namespace Infrastructure.Data
 
             var appointment6 = context.Add(new Appointment()
             {
-                AppointmentDateTime = DateTime.Now.AddDays(3),
+                AppointmentDateTime = DateTime.Today,
                 DurationInMin = 15,
                 DoctorEmailAddress = "Charlie@gmail.uk",
                 PatientCpr = "230207-5118",

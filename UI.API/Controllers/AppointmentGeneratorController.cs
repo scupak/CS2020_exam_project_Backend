@@ -28,7 +28,7 @@ namespace UI.API.Controllers
             
 
              _appointmentGenerator.StopAsync(new System.Threading.CancellationToken());
-                return Ok("generator stooped");
+                return Ok("generator stopped");
             }
             else
             {
@@ -47,7 +47,7 @@ namespace UI.API.Controllers
             }
             else
             {
-                return StatusCode(400, "the generator is already stated");
+                return StatusCode(400, "the generator is already started");
             }
         }
     }
