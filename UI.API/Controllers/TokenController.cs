@@ -93,7 +93,11 @@ namespace UI.API.Controllers
                     });
 
                 }
-                catch(NullReferenceException e)
+                catch (KeyNotFoundException e)
+                {
+                    return Unauthorized();
+                }
+                catch (NullReferenceException e)
                 {
                     return Unauthorized();
                 }
@@ -101,6 +105,26 @@ namespace UI.API.Controllers
                 {
                     return Unauthorized();
                 }
+                catch (Exception x)
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (KeyNotFoundException e)
+            {
+                return Unauthorized();
+            }
+            catch (NullReferenceException e)
+            {
+                return Unauthorized();
+            }
+            catch (InvalidDataException x)
+            {
+                return Unauthorized();
+            }
+            catch (Exception x)
+            {
+                return Unauthorized();
             }
             /*
             // Authentication successful
