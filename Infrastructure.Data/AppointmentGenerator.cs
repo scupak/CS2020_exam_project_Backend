@@ -14,6 +14,7 @@ namespace Infrastructure.Data
   {
       private readonly IServiceScopeFactory scopeFactory;
         private Timer _timer;
+        public bool Runnning { get; set; }
 
         public AppointmentGenerator(IServiceScopeFactory scopeFactory)
       {
@@ -21,7 +22,8 @@ namespace Infrastructure.Data
       }
 
       public Task StartAsync(CancellationToken cancellationToken)
-        {
+      {
+          Runnning = true;
             // timer repeates call to RemoveScheduledAccounts every 24 hours.
             _timer = new Timer(
                 AddAppointments, 
@@ -35,6 +37,7 @@ namespace Infrastructure.Data
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            Runnning = false;
             _timer?.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;

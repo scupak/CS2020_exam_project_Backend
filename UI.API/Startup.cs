@@ -100,8 +100,8 @@ namespace UI.API
             services.AddScoped<IService<Appointment, int>, AppointmentService>();
             services.AddScoped<IAppointmentValidator, AppointmentValidator>();
 
-            services.AddHostedService<AppointmentGenerator>();
-
+            //services.AddHostedService<AppointmentGenerator>();
+            services.AddSingleton<AppointmentGenerator>();
            
 
             // Register the AuthenticationHelper in the helpers folder for dependency
