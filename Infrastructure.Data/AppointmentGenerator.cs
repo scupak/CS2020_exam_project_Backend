@@ -63,38 +63,71 @@ namespace Infrastructure.Data
                      clinicContext.SaveChanges();
                  } */
 
-                DateTime begin = DateTime.Today;
-
-                DateTime end = DateTime.Today.AddDays(30);
-
-
-                for (DateTime date = begin; date <= end; date = date.AddDays(1))
+                if (clinicContext.Doctors.Any())
                 {
+                    List<Appointment> appointmentsToAdd = new List<Appointment>();
+
+                    DateTime begin = DateTime.Today;
+
+                    DateTime end = DateTime.Today.AddDays(7);
 
 
-                    if (clinicContext.Doctors.Any())
+                    for (DateTime date = begin; date <= end; date = date.AddDays(1))
                     {
-                        foreach (Doctor doctor in clinicContext.Doctors)
-                        {
-                            DateTime OpeningTime = date.Date + new TimeSpan(10, 00, 00);
-                            DateTime ClosingTime = date.Date + new TimeSpan(16, 00, 00);
-                            DateTime LunchStartTime = date.Date + new TimeSpan(12, 00, 00);
-                            DateTime LunchEndTime = date.Date + new TimeSpan(13, 00, 00);
 
-                            /*
-                            DateTime OpeningTime = date.Hour(10).Minute(00);
-                            DateTime ClosingTime = date.Hour(16).Minute(00);
-                            DateTime LunchStartTime = date.Hour(12).Minute(00);
-                            DateTime LunchEndTime = date.Hour(13).Minute(00);
-                            */
-                            Console.WriteLine(OpeningTime + ", " + ClosingTime + ", " + LunchStartTime + ", " + LunchEndTime);
-                        }
 
+                       
+                            foreach (Doctor doctor in clinicContext.Doctors)
+                            {
+                                DateTime openingTime = date.Date + new TimeSpan(10, 00, 00);
+                                DateTime closingTime = date.Date + new TimeSpan(16, 00, 00);
+                                DateTime lunchStartTime = date.Date + new TimeSpan(12, 00, 00);
+                                DateTime lunchEndTime = date.Date + new TimeSpan(13, 00, 00);
+
+                                DateTime iterateDateTime = openingTime;
+
+                                while (iterateDateTime < closingTime)
+                                {
+                                    if (iterateDateTime !>= lunchStartTime && iterateDateTime !<= lunchEndTime)
+                                    {
+                                    
+
+                                  
+
+                                    }
+                                    else
+                                    {
+                                        
+                                        appointmentsToAdd.Add(new Appointment()
+                                        {
+                                            AppointmentDateTime = iterateDateTime,
+                                            DurationInMin = 15,
+                                            DoctorEmailAddress = doctor.DoctorEmailAddress,
+
+                                        });
+
+                                    }
+
+                                    iterateDateTime = iterateDateTime.AddMinutes(15);
+
+
+
+
+                                }
+
+                            }
+
+                        
                     }
+
+                    if (appointmentsToAdd.Any())
+                    {
+                        clinicContext.AddRange(appointmentsToAdd);
+                        clinicContext.SaveChanges();
+                    }
+
                 }
 
-                
-               
             }
         }
   } 

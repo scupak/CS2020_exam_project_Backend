@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Core.Entities.Entities.BE;
 
 namespace Infrastructure.Data
@@ -173,7 +175,7 @@ namespace Infrastructure.Data
 
             var appointment6 = context.Add(new Appointment()
             {
-                AppointmentDateTime = DateTime.Today,
+                AppointmentDateTime = DateTime.Now.AddDays(3),
                 DurationInMin = 15,
                 DoctorEmailAddress = "Charlie@gmail.uk",
                 PatientCpr = "230207-5118",
@@ -181,6 +183,91 @@ namespace Infrastructure.Data
             }).Entity;
 
             context.SaveChanges();
+
+
+               
+
+                /* if (clinicContext.Doctors.First(doctor => doctor.DoctorEmailAddress.Contains("Karl@gmail.com")) != null)
+                 {
+                     clinicContext.AddRange(
+                         new Appointment()
+                         {
+                             AppointmentDateTime = DateTime.Now.AddDays(3),
+                             DurationInMin = 15,
+                             DoctorEmailAddress = "Karl@gmail.com"
+                         });
+
+                     clinicContext.SaveChanges();
+                 } */
+
+                if (context.Doctors.Any())
+                {
+                    List<Appointment> appointmentsToAdd = new List<Appointment>();
+
+                    DateTime begin = DateTime.Today;
+
+                    DateTime end = DateTime.Today.AddDays(7);
+
+
+                    for (DateTime date = begin; date <= end; date = date.AddDays(1))
+                    {
+
+
+                        if(date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                        {
+
+
+                            foreach (Doctor doctor in context.Doctors)
+                            {
+                                DateTime openingTime = date.Date + new TimeSpan(10, 00, 00);
+                                DateTime closingTime = date.Date + new TimeSpan(16, 00, 00);
+                                DateTime lunchStartTime = date.Date + new TimeSpan(12, 00, 00);
+                                DateTime lunchEndTime = date.Date + new TimeSpan(13, 00, 00);
+
+                                DateTime iterateDateTime = openingTime;
+
+                                while (iterateDateTime < closingTime)
+                                {
+                                    if (iterateDateTime ! >= lunchStartTime && iterateDateTime ! <= lunchEndTime)
+                                    {
+
+
+
+
+                                    }
+                                    else
+                                    {
+
+                                        appointmentsToAdd.Add(new Appointment()
+                                        {
+                                            AppointmentDateTime = iterateDateTime,
+                                            DurationInMin = 15,
+                                            DoctorEmailAddress = doctor.DoctorEmailAddress,
+
+                                        });
+
+                                    }
+
+                                    iterateDateTime = iterateDateTime.AddMinutes(15);
+
+
+
+
+                                }
+
+                            }
+                        }
+
+
+                    }
+
+                    if (appointmentsToAdd.Any())
+                    {
+                        context.AddRange(appointmentsToAdd);
+                        context.SaveChanges();
+                    }
+
+                }
         }
 
 
