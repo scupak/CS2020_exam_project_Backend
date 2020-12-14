@@ -20,13 +20,14 @@ namespace Infrastructure.Data
             // Create two users with hashed and salted passwords
             string password = "1234";
 
-            byte[] passwordHashKarl, passwordSaltKarl, passwordHashCharlie, passwordSaltCharlie, passwordHashAnne, passwordSaltAnne, passwordHashfrank, passwordSaltfrank, passwordHashGeorge, passwordSaltGeorge ,passwordHashKermit, passwordSaltKermit;
+            byte[] passwordHashKarl, passwordSaltKarl, passwordHashCharlie, passwordSaltCharlie, passwordHashAnne, passwordSaltAnne, passwordHashfrank, passwordSaltfrank, passwordHashGeorge, passwordSaltGeorge ,passwordHashKermit, passwordSaltKermit, passwordHashAdmin, passwordSaltAdmin;
             authenticationHelper.CreatePasswordHash(password, out passwordHashKarl, out passwordSaltKarl);
             authenticationHelper.CreatePasswordHash(password, out passwordHashCharlie, out passwordSaltCharlie);
             authenticationHelper.CreatePasswordHash(password, out passwordHashAnne, out passwordSaltAnne);
             authenticationHelper.CreatePasswordHash(password, out passwordHashfrank, out passwordSaltfrank);
             authenticationHelper.CreatePasswordHash(password, out passwordHashGeorge, out passwordSaltGeorge);
             authenticationHelper.CreatePasswordHash(password, out passwordHashKermit, out passwordSaltKermit);
+            authenticationHelper.CreatePasswordHash(password, out passwordHashAdmin, out passwordSaltAdmin);
 
             var doctor1 = context.Add(new Doctor()
             {
@@ -63,6 +64,18 @@ namespace Infrastructure.Data
 
             }).Entity;
 
+            var doctor4 = context.Add(new Doctor()
+            {
+                FirstName = "Admin",
+                LastName = "Admin",
+                DoctorEmailAddress = "4Admin@gmail.com",
+                PhoneNumber = "11111111",
+                IsAdmin = true,
+                PasswordHash = passwordHashAnne,
+                PasswordSalt = passwordSaltAnne,
+
+            }).Entity;
+
             var patient1 = context.Add(new Patient()
             {
                 PatientCPR = "011200-4041",
@@ -81,7 +94,9 @@ namespace Infrastructure.Data
                 PatientFirstName = "George",
                 PatientLastName = "Finch",
                 PatientEmail = "George@hotmail.uk",
-                PatientPhone = "67891245"
+                PatientPhone = "67891245",
+                PasswordHash = passwordHashGeorge,
+                PasswordSalt = passwordSaltGeorge,
 
             }).Entity;
 
