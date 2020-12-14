@@ -37,6 +37,7 @@ namespace Infrastructure.Data
                 PhoneNumber = "23418957",
                 PasswordHash = passwordHashKarl,
                 PasswordSalt = passwordSaltKarl,
+                IsAdmin = true
 
             }).Entity;
 
