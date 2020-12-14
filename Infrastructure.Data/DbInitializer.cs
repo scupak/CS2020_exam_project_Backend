@@ -168,19 +168,39 @@ namespace Infrastructure.Data
 
             var appointment5 = context.Add(new Appointment()
             {
-                AppointmentDateTime = DateTime.Now.AddDays(3),
+                AppointmentDateTime = DateTime.Today,
                 DurationInMin = 15,
-                DoctorEmailAddress = "Karl@gmail.com",
-                PatientCpr = "110695-0004",
+                DoctorEmailAddress = "Karl@gmail.com"
             }).Entity;
 
             var appointment6 = context.Add(new Appointment()
             {
-                AppointmentDateTime = DateTime.Today + new TimeSpan(10, 00, 00),
+                AppointmentDateTime = DateTime.Today.AddDays(1),
                 DurationInMin = 15,
-                DoctorEmailAddress = "Charlie@gmail.uk",
-                PatientCpr = "230207-5118",
-                Description = "Knee checkup"
+                DoctorEmailAddress = "Karl@gmail.com"
+            }).Entity;
+
+            var appointment7 = context.Add(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(2),
+                DurationInMin = 15,
+                DoctorEmailAddress = "Karl@gmail.com"
+            }).Entity;
+
+            var appointment8 = context.Add(new Appointment()
+            {
+                AppointmentDateTime = DateTime.Now.AddDays(3),
+                DurationInMin = 15,
+                DoctorEmailAddress = "Karl@gmail.com",
+            }).Entity;
+
+            var appointment9 = context.Add(new Appointment()
+            {
+
+                AppointmentDateTime = DateTime.Today + new TimeSpan(10, 00, 00),
+
+                DurationInMin = 15,
+                DoctorEmailAddress = "Karl@gmail.com",
             }).Entity;
 
             context.SaveChanges();
