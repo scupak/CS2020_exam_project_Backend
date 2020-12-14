@@ -67,7 +67,7 @@ namespace UI.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return StatusCode(404, "Could not find entity\n" + ex.Message);
+                return StatusCode(404, "Could not find entity" + ex.Message);
             }
             catch (InvalidDataException ex)
             {
@@ -174,7 +174,7 @@ namespace UI.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return StatusCode(404, "Could not find entity\n" + ex.Message);
+                return StatusCode(404, "Could not find entity" + ex.Message);
             }
             catch (InvalidDataException ex)
             {
