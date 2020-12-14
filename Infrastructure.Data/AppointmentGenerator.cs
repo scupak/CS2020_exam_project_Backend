@@ -63,6 +63,7 @@ namespace Infrastructure.Data
                      clinicContext.SaveChanges();
                  } */
 
+
                 if (clinicContext.Doctors.Any())
                 {
                     List<Appointment> appointmentsToAdd = new List<Appointment>();
@@ -74,30 +75,48 @@ namespace Infrastructure.Data
 
                     for (DateTime date = begin; date <= end; date = date.AddDays(1))
                     {
+                        IEnumerable<Appointment> appointmentsInDay = new List<Appointment>();
+
+                        if (clinicContext.Appointments.Any(appointment =>
+                            appointment.AppointmentDateTime.Date == date.Date))
+                        {
+                            appointmentsInDay = clinicContext.Appointments.Where(appointment =>
+                                appointment.AppointmentDateTime.Date == date.Date);
+                        }
 
 
-                       
-                            foreach (Doctor doctor in clinicContext.Doctors)
+
+                        foreach (Doctor doctor in clinicContext.Doctors)
+                        {
+                            DateTime openingTime = date.Date + new TimeSpan(10, 00, 00);
+                            DateTime closingTime = date.Date + new TimeSpan(16, 00, 00);
+                            DateTime lunchStartTime = date.Date + new TimeSpan(12, 00, 00);
+                            DateTime lunchEndTime = date.Date + new TimeSpan(13, 00, 00);
+
+                            DateTime iterateDateTime = openingTime;
+
+                            while (iterateDateTime < closingTime)
                             {
-                                DateTime openingTime = date.Date + new TimeSpan(10, 00, 00);
-                                DateTime closingTime = date.Date + new TimeSpan(16, 00, 00);
-                                DateTime lunchStartTime = date.Date + new TimeSpan(12, 00, 00);
-                                DateTime lunchEndTime = date.Date + new TimeSpan(13, 00, 00);
-
-                                DateTime iterateDateTime = openingTime;
-
-                                while (iterateDateTime < closingTime)
+                                if (iterateDateTime !>= lunchStartTime && iterateDateTime !<= lunchEndTime)
                                 {
-                                    if (iterateDateTime !>= lunchStartTime && iterateDateTime !<= lunchEndTime)
-                                    {
                                     
 
                                   
 
-                                    }
-                                    else
-                                    {
-                                        
+                                }
+                                else
+                                {
+
+
+                                    
+                                    bool anyIntersectingAppointments =  appointmentsInDay.Any(appointment =>
+                                        (appointment.AppointmentDateTime >= iterateDateTime && appointment.AppointmentDateTime <= iterateDateTime.AddMinutes(15))
+                                        &&
+                                        (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= iterateDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= iterateDateTime.AddMinutes(15)));
+
+                                    
+                                    if(!anyIntersectingAppointments)
+                                    { 
                                         appointmentsToAdd.Add(new Appointment()
                                         {
                                             AppointmentDateTime = iterateDateTime,
@@ -107,15 +126,20 @@ namespace Infrastructure.Data
                                         });
 
                                     }
-
-                                    iterateDateTime = iterateDateTime.AddMinutes(15);
-
-
+                                        
+                                       
 
 
                                 }
 
+                                iterateDateTime = iterateDateTime.AddMinutes(15);
+
+
+
+
                             }
+
+                        }
 
                         
                     }
