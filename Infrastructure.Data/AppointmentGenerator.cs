@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace Infrastructure.Data
             _timer = new Timer(
                 AddAppointments, 
                 null, 
-                TimeSpan.FromSeconds(20), 
+                TimeSpan.FromSeconds(40), 
                 TimeSpan.FromSeconds(20)
             );
 
@@ -45,27 +46,21 @@ namespace Infrastructure.Data
             using (var scope = scopeFactory.CreateScope())
             {
                 var clinicContext = scope.ServiceProvider.GetRequiredService<ClinicContext>();
-                
 
-                clinicContext.AddRange(new Appointment()
-                    {
-                        AppointmentDateTime = DateTime.Now.AddDays(3),
-                        DurationInMin = 15,
-                        DoctorEmailAddress = "Charlie@gmail.uk",
-                        PatientCpr = "110695-0004",
-                        Description = "Knee checkup"
+                if (clinicContext.Doctors.First(doctor => doctor.DoctorEmailAddress.Contains("Karl@gmail.com")) != null)
+                {
+                    clinicContext.AddRange(
+                        new Appointment()
+                        {
+                            AppointmentDateTime = DateTime.Now.AddDays(3),
+                            DurationInMin = 15,
+                            DoctorEmailAddress = "Karl@gmail.com"
+                        });
 
+                    clinicContext.SaveChanges();
+                }
 
-                    },
-                    new Appointment()
-                    {
-                        AppointmentDateTime = DateTime.Now.AddDays(3),
-                        DurationInMin = 15,
-                        DoctorEmailAddress = "Karl@gmail.com",
-                        PatientCpr = "011200-4041"
-                    });
-
-                clinicContext.SaveChanges();
+               
             }
         }
   } 
