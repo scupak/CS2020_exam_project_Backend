@@ -272,7 +272,7 @@ namespace Infrastructure.Data
 
 
             //Only make appointments if there are any doctors. 
-            /*
+            
             if (context.Doctors.Any())
                 {
                     List<Appointment> appointmentsToAdd = new List<Appointment>();
@@ -325,7 +325,12 @@ namespace Infrastructure.Data
                                             &&
                                             (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= iterateDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= iterateDateTime.AddMinutes(15)));
 
-                                    
+                                    /*
+                                        bool anyIntersectingAppointments2 =  appointmentsInDay.Any(appointment => 
+                                            ())
+                                    */
+
+
                                         if(!anyIntersectingAppointments)
                                         { 
                                             appointmentsToAdd.Add(new Appointment()
@@ -360,7 +365,7 @@ namespace Infrastructure.Data
                     }
 
                 }
-            */
+            
         }
 
 
