@@ -201,6 +201,39 @@ namespace Infrastructure.Data
 
                 DurationInMin = 15,
                 DoctorEmailAddress = "Karl@gmail.com",
+                Description = "generator test"
+            }).Entity;
+
+            var appointment10 = context.Add(new Appointment()
+            {
+
+                AppointmentDateTime = DateTime.Today + new TimeSpan(10, 15, 00),
+
+                DurationInMin = 15,
+                DoctorEmailAddress = "Karl@gmail.com",
+                Description = "generator test"
+            }).Entity;
+
+            var appointment11 = context.Add(new Appointment()
+            {
+
+                AppointmentDateTime = DateTime.Today + new TimeSpan(10, 30, 00),
+
+                DurationInMin = 240,
+                DoctorEmailAddress = "Karl@gmail.com",
+                Description = "generator test"
+            }).Entity;
+
+
+
+             var appointment12 = context.Add(new Appointment()
+            {
+
+                AppointmentDateTime = DateTime.Today + new TimeSpan(10, 00, 00),
+
+                DurationInMin = 15,
+                DoctorEmailAddress = "Charlie@gmail.uk",
+                Description = "generator test"
             }).Entity;
 
             context.SaveChanges();
@@ -239,7 +272,8 @@ namespace Infrastructure.Data
 
 
             //Only make appointments if there are any doctors. 
-                if (context.Doctors.Any())
+            /*
+            if (context.Doctors.Any())
                 {
                     List<Appointment> appointmentsToAdd = new List<Appointment>();
 
@@ -326,6 +360,7 @@ namespace Infrastructure.Data
                     }
 
                 }
+            */
         }
 
 
