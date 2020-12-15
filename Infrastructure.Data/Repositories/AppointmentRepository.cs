@@ -27,9 +27,10 @@ namespace Infrastructure.Data.Repositories
                 int searchInt2;
 
                 var filteredList = new FilteredList<Appointment>();
+
                 IEnumerable<Appointment> filtering  = _clinicContext.Appointments.AsNoTracking();
 
-                filteredList.TotalCount = Count();
+                
                 filteredList.FilterUsed = filter;
 
                 
@@ -194,6 +195,7 @@ namespace Infrastructure.Data.Repositories
                         : filtering.OrderByDescending(a => prop.GetValue(a, null));
                 }
 
+                filteredList.TotalCount = filtering.Count();
 
                 if (filter.CurrentPage != 0 && filter.ItemsPrPage != 0)
                 {

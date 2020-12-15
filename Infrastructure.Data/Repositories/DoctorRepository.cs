@@ -30,23 +30,10 @@ namespace Infrastructure.Data.Repositories
                 var filteredList = new FilteredList<Doctor>();
                 IEnumerable<Doctor> filtering;
 
-                filteredList.TotalCount = Count();
                 filteredList.FilterUsed = filter;
 
-                if (filter.CurrentPage != 0 && filter.ItemsPrPage != 0)
-                {
-                    filtering = _clinicContext.Doctors.AsNoTracking()
-                         .Skip((filter.CurrentPage - 1) * filter.ItemsPrPage)
-                         .Take(filter.ItemsPrPage);
-
-                }
-                else
-                {
-                    filtering = _clinicContext.Doctors.AsNoTracking();
-                }
-
-
-
+                filtering = _clinicContext.Doctors.AsNoTracking();
+                
                 if (!string.IsNullOrEmpty(filter.SearchField))
                 {
                     switch (filter.SearchField)
@@ -215,11 +202,20 @@ namespace Infrastructure.Data.Repositories
                         throw new InvalidDataException("Wrong OrderProperty input, OrderProperty has to match to corresponding doctor property");
                     }
 
-
+                    filteredList.TotalCount = filtering.Count();
 
                     filtering = "ASC".Equals(filter.OrderDirection)
                         ? filtering.OrderBy(a => prop.GetValue(a, null))
                         : filtering.OrderByDescending(a => prop.GetValue(a, null));
+                }
+
+                filteredList.TotalCount = filtering.Count();
+
+                if (filter.CurrentPage != 0 && filter.ItemsPrPage != 0)
+                {
+                    filtering = filtering.Skip((filter.CurrentPage - 1) * filter.ItemsPrPage)
+                        .Take(filter.ItemsPrPage);
+
                 }
 
                 filteredList.List = filtering.ToList();
