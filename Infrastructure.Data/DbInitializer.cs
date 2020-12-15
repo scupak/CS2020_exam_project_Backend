@@ -224,9 +224,27 @@ namespace Infrastructure.Data
                 Description = "generator test"
             }).Entity;
 
+            var appointment12 = context.Add(new Appointment()
+            {
 
+                AppointmentDateTime = DateTime.Today.AddDays(1) + new TimeSpan(10, 30, 00),
 
-             var appointment12 = context.Add(new Appointment()
+                DurationInMin = 300,
+                DoctorEmailAddress = "Karl@gmail.com",
+                Description = "generator test"
+            }).Entity;
+
+            var appointment14 = context.Add(new Appointment()
+            {
+
+                AppointmentDateTime = DateTime.Today.AddDays(2) + new TimeSpan(10, 00, 00),
+
+                DurationInMin = 1,
+                DoctorEmailAddress = "Karl@gmail.com",
+                Description = "generator test super short"
+            }).Entity;
+
+             var appointment15 = context.Add(new Appointment()
             {
 
                 AppointmentDateTime = DateTime.Today + new TimeSpan(10, 00, 00),
@@ -235,6 +253,17 @@ namespace Infrastructure.Data
                 DoctorEmailAddress = "Charlie@gmail.uk",
                 Description = "generator test"
             }).Entity;
+
+
+             var appointment16 = context.Add(new Appointment()
+             {
+
+                 AppointmentDateTime = DateTime.Today.AddDays(2) + new TimeSpan(10, 01, 00),
+
+                 DurationInMin = 14,
+                 DoctorEmailAddress = "Karl@gmail.com",
+                 Description = "generator test super short 2"
+             }).Entity;
 
             context.SaveChanges();
 
@@ -276,104 +305,106 @@ namespace Infrastructure.Data
             
             
             if (context.Doctors.Any())
+            {
+                List<Appointment> appointmentsToAdd = new List<Appointment>();
+
+                DateTime begin = DateTime.Today;
+
+                DateTime end = DateTime.Today.AddDays(7);
+
+                //loop through the days. 
+                for (DateTime date = begin; date <= end; date = date.AddDays(1))
                 {
-                    List<Appointment> appointmentsToAdd = new List<Appointment>();
+                    //find all appointments for the day
+                    IEnumerable<Appointment> appointmentsInDay = new List<Appointment>();
 
-                    DateTime begin = DateTime.Today;
-
-                    DateTime end = DateTime.Today.AddDays(7);
-
-                    //loop through the days. 
-                    for (DateTime date = begin; date <= end; date = date.AddDays(1))
+                    if ( context.Appointments.Any(appointment =>
+                        appointment.AppointmentDateTime.Date == date.Date))
                     {
-                        //find all appointments for the day
-                        IEnumerable<Appointment> appointmentsInDay = new List<Appointment>();
+                        appointmentsInDay =  context.Appointments.Where(appointment =>
+                            appointment.AppointmentDateTime.Date == date.Date);
+                    }
 
-                        if ( context.Appointments.Any(appointment =>
-                            appointment.AppointmentDateTime.Date == date.Date))
+
+                    if(date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
+                    {
+
+
+                        foreach (Doctor doctor in context.Doctors)
                         {
-                            appointmentsInDay =  context.Appointments.Where(appointment =>
-                                appointment.AppointmentDateTime.Date == date.Date);
-                        }
+                            DateTime openingTime = date.Date + new TimeSpan(10, 00, 00);
+                            DateTime closingTime = date.Date + new TimeSpan(16, 00, 00);
+                            DateTime lunchStartTime = date.Date + new TimeSpan(12, 00, 00);
+                            DateTime lunchEndTime = date.Date + new TimeSpan(13, 00, 00);
 
+                            DateTime iterateDateTime = openingTime;
 
-                        if(date.DayOfWeek != DayOfWeek.Saturday && date.DayOfWeek != DayOfWeek.Sunday)
-                        {
-
-
-                            foreach (Doctor doctor in context.Doctors)
+                            while (iterateDateTime < closingTime)
                             {
-                                DateTime openingTime = date.Date + new TimeSpan(10, 00, 00);
-                                DateTime closingTime = date.Date + new TimeSpan(16, 00, 00);
-                                DateTime lunchStartTime = date.Date + new TimeSpan(12, 00, 00);
-                                DateTime lunchEndTime = date.Date + new TimeSpan(13, 00, 00);
-
-                                DateTime iterateDateTime = openingTime;
-
-                                while (iterateDateTime < closingTime)
+                                if (iterateDateTime ! >= lunchStartTime && iterateDateTime ! <= lunchEndTime)
                                 {
-                                    if (iterateDateTime ! >= lunchStartTime && iterateDateTime ! <= lunchEndTime)
-                                    {
-
-
-
-
-                                    }
-                                    else
-                                    {
-                                        /*
-                                         * filtering = filtering.Where(appointment =>
-                            (appointment.AppointmentDateTime >= filter.OrderStartDateTime && appointment.AppointmentDateTime <= filter.OrderStopDateTime)
-                            &&
-                            (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= filter.OrderStartDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= filter.OrderStopDateTime));
-                        
-                                         */
-
-                                       bool anyIntersectingAppointments =  appointmentsInDay.Any(appointment =>
-                                            (appointment.AppointmentDateTime >= iterateDateTime && appointment.AppointmentDateTime <= iterateDateTime.AddMinutes(15))
-                                            &&
-                                            (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= iterateDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= iterateDateTime.AddMinutes(15)));
-                                    /*
-                                    
-                                        bool anyIntersectingAppointments2 =  appointmentsInDay.Any(appointment => 
-                                            (iterateDateTime >= appointment.AppointmentDateTime))
-                                    */
-                             
-
-                                        if(!anyIntersectingAppointments)
-                                        { 
-                                            appointmentsToAdd.Add(new Appointment()
-                                            {
-                                                AppointmentDateTime = iterateDateTime,
-                                                DurationInMin = 15,
-                                                DoctorEmailAddress = doctor.DoctorEmailAddress,
-
-                                            });
-
-                                        }
-
-                                    }
-
-                                    iterateDateTime = iterateDateTime.AddMinutes(15);
 
 
 
 
                                 }
+                                else
+                                {
+                                    /*
+                                     * filtering = filtering.Where(appointment =>
+                        (appointment.AppointmentDateTime >= filter.OrderStartDateTime && appointment.AppointmentDateTime <= filter.OrderStopDateTime)
+                        &&
+                        (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= filter.OrderStartDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= filter.OrderStopDateTime));
+                    
+                                     */
+
+                                    bool anyIntersectingAppointments =  appointmentsInDay.Where(appointment => appointment.DoctorEmailAddress.Contains(doctor.DoctorEmailAddress)).Any(appointment =>
+                                        (appointment.AppointmentDateTime >= iterateDateTime && appointment.AppointmentDateTime <= iterateDateTime.AddMinutes(15))
+                                        &&
+                                        (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= iterateDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= iterateDateTime.AddMinutes(15)));
+
+
+                                    bool anyIntersectingAppointments2 = appointmentsInDay.Where(appointment => appointment.DoctorEmailAddress.Contains(doctor.DoctorEmailAddress)).Any(appointment =>
+                                        (iterateDateTime >= appointment.AppointmentDateTime && iterateDateTime < appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin))
+                                        ||
+                                        (iterateDateTime.AddMinutes(15) > appointment.AppointmentDateTime && iterateDateTime.AddMinutes(15) <= appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin)));
+                                    
+                             
+
+                                    if(!anyIntersectingAppointments && !anyIntersectingAppointments2)
+                                    { 
+                                        appointmentsToAdd.Add(new Appointment()
+                                        {
+                                            AppointmentDateTime = iterateDateTime,
+                                            DurationInMin = 15,
+                                            DoctorEmailAddress = doctor.DoctorEmailAddress,
+
+                                        });
+
+                                    }
+
+                                }
+
+                                iterateDateTime = iterateDateTime.AddMinutes(15);
+
+
+
 
                             }
+
                         }
-
-
                     }
 
-                    if (appointmentsToAdd.Any())
-                    {
-                        context.AddRange(appointmentsToAdd);
-                        context.SaveChanges();
-                    }
 
                 }
+
+                if (appointmentsToAdd.Any())
+                {
+                    context.AddRange(appointmentsToAdd);
+                    context.SaveChanges();
+                }
+
+            }
                 
             
         }
