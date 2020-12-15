@@ -19,8 +19,8 @@ namespace UI.API.Controllers
         {
             _appointmentGenerator = appointmentGenerator;
         }
-
-        [HttpDelete]
+        [Route("stop")]
+        [HttpGet]
         public IActionResult stop()
         {
             if (_appointmentGenerator.Runnning)
@@ -36,7 +36,8 @@ namespace UI.API.Controllers
             }
         }
 
-        [HttpPost]
+        [Route("start")]
+        [HttpGet]
         public IActionResult start()
         {
             if (!_appointmentGenerator.Runnning)

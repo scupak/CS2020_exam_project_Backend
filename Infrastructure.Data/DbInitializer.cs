@@ -115,7 +115,7 @@ namespace Infrastructure.Data
 
 
             }).Entity;
-
+            /*
             var appointment1 = context.Add(new Appointment()
             {
               AppointmentDateTime  = DateTime.Now.AddDays(5),
@@ -139,25 +139,17 @@ namespace Infrastructure.Data
                 PatientCpr = "110695-0004",
                 Description = "Knee checkup"
             }).Entity;
-
+            */
+            
             /*
             DateTime begin = DateTime.Today;
 
             DateTime end = DateTime.Today.AddDays(30);
-
-
-            for(DateTime date = begin; date <= end; date = date.AddDays(1))
-            {
-                foreach (Doctor doctor in context.Doctors)
-                {
-
-
-
-                }
-
-            }
             */
 
+           
+            
+            /*
             var appointment4 = context.Add(new Appointment()
             {
                 AppointmentDateTime = DateTime.Now.AddDays(5),
@@ -264,7 +256,7 @@ namespace Infrastructure.Data
                  DoctorEmailAddress = "Karl@gmail.com",
                  Description = "generator test super short 2"
              }).Entity;
-
+            */
             context.SaveChanges();
 
 
@@ -303,7 +295,7 @@ namespace Infrastructure.Data
             //Only make appointments if there are any doctors. 
 
             
-            
+            /*
             if (context.Doctors.Any())
             {
                 List<Appointment> appointmentsToAdd = new List<Appointment>();
@@ -357,7 +349,7 @@ namespace Infrastructure.Data
                         (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= filter.OrderStartDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= filter.OrderStopDateTime));
                     
                                      */
-
+            /*
                                     bool anyIntersectingAppointments =  appointmentsInDay.Where(appointment => appointment.DoctorEmailAddress.Contains(doctor.DoctorEmailAddress)).Any(appointment =>
                                         (appointment.AppointmentDateTime >= iterateDateTime && appointment.AppointmentDateTime <= iterateDateTime.AddMinutes(15))
                                         &&
@@ -403,9 +395,9 @@ namespace Infrastructure.Data
                     context.AddRange(appointmentsToAdd);
                     context.SaveChanges();
                 }
-
+           
             }
-                
+                */ 
             
         }
 
