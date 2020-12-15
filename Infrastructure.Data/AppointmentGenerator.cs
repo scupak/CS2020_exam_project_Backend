@@ -24,12 +24,12 @@ namespace Infrastructure.Data
       public Task StartAsync(CancellationToken cancellationToken)
       {
           Runnning = true;
-            // timer repeates call to RemoveScheduledAccounts every 24 hours.
+            // timer repeates call to AddAppointments every 24 hours.
             _timer = new Timer(
                 AddAppointments, 
                 null, 
                 TimeSpan.FromSeconds(40), 
-                TimeSpan.FromSeconds(20)
+                TimeSpan.FromHours(24)
             );
 
             return Task.CompletedTask;
