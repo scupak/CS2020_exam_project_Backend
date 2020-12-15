@@ -273,7 +273,7 @@ namespace Infrastructure.Data
 
             //Only make appointments if there are any doctors. 
 
-            /*
+            
             
             if (context.Doctors.Any())
                 {
@@ -281,7 +281,7 @@ namespace Infrastructure.Data
 
                     DateTime begin = DateTime.Today;
 
-                    DateTime end = DateTime.Today.AddDays(365);
+                    DateTime end = DateTime.Today.AddDays(7);
 
                     //loop through the days. 
                     for (DateTime date = begin; date <= end; date = date.AddDays(1))
@@ -329,16 +329,16 @@ namespace Infrastructure.Data
                         
                                          */
 
-                             /*           bool anyIntersectingAppointments =  appointmentsInDay.Any(appointment =>
+                                       bool anyIntersectingAppointments =  appointmentsInDay.Any(appointment =>
                                             (appointment.AppointmentDateTime >= iterateDateTime && appointment.AppointmentDateTime <= iterateDateTime.AddMinutes(15))
                                             &&
                                             (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= iterateDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= iterateDateTime.AddMinutes(15)));
-
                                     /*
+                                    
                                         bool anyIntersectingAppointments2 =  appointmentsInDay.Any(appointment => 
-                                            ())
+                                            (iterateDateTime >= appointment.AppointmentDateTime))
                                     */
-                             /*
+                             
 
                                         if(!anyIntersectingAppointments)
                                         { 
@@ -374,7 +374,7 @@ namespace Infrastructure.Data
                     }
 
                 }
-                */
+                
             
         }
 
