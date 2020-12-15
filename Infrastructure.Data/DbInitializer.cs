@@ -272,6 +272,8 @@ namespace Infrastructure.Data
 
 
             //Only make appointments if there are any doctors. 
+
+            /*
             
             if (context.Doctors.Any())
                 {
@@ -319,8 +321,15 @@ namespace Infrastructure.Data
                                     }
                                     else
                                     {
+                                        /*
+                                         * filtering = filtering.Where(appointment =>
+                            (appointment.AppointmentDateTime >= filter.OrderStartDateTime && appointment.AppointmentDateTime <= filter.OrderStopDateTime)
+                            &&
+                            (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= filter.OrderStartDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= filter.OrderStopDateTime));
+                        
+                                         */
 
-                                        bool anyIntersectingAppointments =  appointmentsInDay.Any(appointment =>
+                             /*           bool anyIntersectingAppointments =  appointmentsInDay.Any(appointment =>
                                             (appointment.AppointmentDateTime >= iterateDateTime && appointment.AppointmentDateTime <= iterateDateTime.AddMinutes(15))
                                             &&
                                             (appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) >= iterateDateTime && appointment.AppointmentDateTime.AddMinutes(appointment.DurationInMin) <= iterateDateTime.AddMinutes(15)));
@@ -329,7 +338,7 @@ namespace Infrastructure.Data
                                         bool anyIntersectingAppointments2 =  appointmentsInDay.Any(appointment => 
                                             ())
                                     */
-
+                             /*
 
                                         if(!anyIntersectingAppointments)
                                         { 
@@ -365,6 +374,7 @@ namespace Infrastructure.Data
                     }
 
                 }
+                */
             
         }
 

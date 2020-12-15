@@ -27,22 +27,10 @@ namespace Infrastructure.Data.Repositories
                 int searchInt2;
 
                 var filteredList = new FilteredList<Appointment>();
-                IEnumerable<Appointment> filtering;
+                IEnumerable<Appointment> filtering  = _clinicContext.Appointments.AsNoTracking();
 
                 filteredList.TotalCount = Count();
                 filteredList.FilterUsed = filter;
-
-                if (filter.CurrentPage != 0 && filter.ItemsPrPage != 0)
-                {
-                   filtering = _clinicContext.Appointments.AsNoTracking()
-                        .Skip((filter.CurrentPage - 1) * filter.ItemsPrPage)
-                        .Take(filter.ItemsPrPage);
-
-                }
-                else
-                {
-                   filtering = _clinicContext.Appointments.AsNoTracking();
-                }
 
                 
 
@@ -204,6 +192,14 @@ namespace Infrastructure.Data.Repositories
                     filtering = "ASC".Equals(filter.OrderDirection)
                         ? filtering.OrderBy(a => prop.GetValue(a, null))
                         : filtering.OrderByDescending(a => prop.GetValue(a, null));
+                }
+
+
+                if (filter.CurrentPage != 0 && filter.ItemsPrPage != 0)
+                {
+                    filtering = filtering.Skip((filter.CurrentPage - 1) * filter.ItemsPrPage)
+                        .Take(filter.ItemsPrPage);
+
                 }
 
                 filteredList.List = filtering.ToList();
