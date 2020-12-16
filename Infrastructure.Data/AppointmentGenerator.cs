@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Infrastructure.Data
 {
-  public class AppointmentGenerator : IHostedService
+  public class AppointmentGenerator : IHostedService , IDisposable
   {
       private readonly IServiceScopeFactory scopeFactory;
         private Timer _timer;
@@ -155,5 +155,10 @@ namespace Infrastructure.Data
 
             }
         }
-  } 
+
+        public void Dispose()
+        {
+            _timer.Dispose();
+        }
+    } 
 }

@@ -14,11 +14,13 @@ namespace UI.API.Controllers
     [ApiController]
     public class AppointmentGeneratorController : Controller
     {
+        //public bool Runnning { get; set; }
         private readonly AppointmentGenerator _appointmentGenerator;
 
 
         public AppointmentGeneratorController(AppointmentGenerator appointmentGenerator)
         {
+            //Runnning = true;
             _appointmentGenerator = appointmentGenerator;
         }
         /// <summary>
@@ -34,6 +36,7 @@ namespace UI.API.Controllers
         {
             if (_appointmentGenerator.Runnning)
             {
+                //Runnning = false;
             
 
              _appointmentGenerator.StopAsync(new System.Threading.CancellationToken());
@@ -57,6 +60,7 @@ namespace UI.API.Controllers
         {
             if (!_appointmentGenerator.Runnning)
             {
+                //Runnning = true;
 
                 _appointmentGenerator.StartAsync(new System.Threading.CancellationToken());
             return Ok("generator started");
