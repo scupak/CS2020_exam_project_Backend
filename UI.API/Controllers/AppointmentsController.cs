@@ -242,6 +242,7 @@ namespace UI.API.Controllers
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
+        [Authorize(Roles = "Administrator, Doctor")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

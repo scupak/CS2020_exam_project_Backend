@@ -10,6 +10,7 @@ using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
 using Core.Services.Validators.Interfaces;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -135,6 +136,7 @@ namespace UI.API.Controllers
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -197,6 +199,7 @@ namespace UI.API.Controllers
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -260,6 +263,7 @@ namespace UI.API.Controllers
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
+        [Authorize(Roles = "Administrator")]
         [HttpDelete("{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
