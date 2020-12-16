@@ -25,6 +25,7 @@ namespace Infrastructure.Data
         {
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
+               //generates random salt
                 passwordSalt = hmac.Key;
                 //The salt is automatically appended to the hash.   
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));

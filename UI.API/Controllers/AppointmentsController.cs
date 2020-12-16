@@ -7,9 +7,11 @@ using Core.Entities.Entities.BE;
 using Core.Entities.Entities.Filter;
 using Core.Entities.Exceptions;
 using Core.Services.ApplicationServices.Interfaces;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,10 +23,13 @@ namespace UI.API.Controllers
     public class AppointmentsController : ControllerBase
     {
         private readonly IService<Appointment, int> _appointmentService;
+        private readonly AppointmentGenerator _appointmentGenerator;
 
-        public AppointmentsController(IService<Appointment, int> appointmentService)
+        public AppointmentsController(IService<Appointment, int> appointmentService,
+            IHostedService appointmentGenerator)
         {
             _appointmentService = appointmentService;
+            _appointmentGenerator = appointmentGenerator as AppointmentGenerator;
         }
 
         /// <summary>
@@ -62,7 +67,7 @@ namespace UI.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return StatusCode(404, "Could not find entity\n" + ex.Message);
+                return StatusCode(404, "Could not find entity" + ex.Message);
             }
             catch (InvalidDataException ex)
             {
@@ -143,11 +148,13 @@ namespace UI.API.Controllers
                 appointment.DoctorEmailAddress = null;
 
             }
+
             if (String.IsNullOrEmpty(appointment.PatientCpr))
             {
                 appointment.PatientCpr = null;
 
             }
+
             try
             {
                 return Ok(_appointmentService.Add(appointment));
@@ -167,7 +174,7 @@ namespace UI.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return StatusCode(404, "Could not find entity\n" + ex.Message);
+                return StatusCode(404, "Could not find entity" + ex.Message);
             }
             catch (InvalidDataException ex)
             {
@@ -235,6 +242,7 @@ namespace UI.API.Controllers
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
+        [Authorize(Roles = "Administrator, Doctor")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -272,5 +280,11 @@ namespace UI.API.Controllers
                 return StatusCode(500, "Something went wrong\n" + ex.Message);
             }
         }
+
+
+        
     }
+
+
 }
+

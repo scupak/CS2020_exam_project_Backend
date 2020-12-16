@@ -112,6 +112,7 @@ namespace UI.API.Controllers
         }
 
         // POST api/<PatientsController>
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public ActionResult<Patient>Add([FromBody] PatientDTO patientDTO)
         {
@@ -164,6 +165,7 @@ namespace UI.API.Controllers
         }
 
         // PUT api/<PatientsController>/5
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         public ActionResult<Patient> Edit( [FromBody] PatientDTO patientDTO)
         {
@@ -227,6 +229,7 @@ namespace UI.API.Controllers
         }
 
         // DELETE api/<PatientsController>/5
+        [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         public ActionResult<Patient> Remove(string id)
         {
