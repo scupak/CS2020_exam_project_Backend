@@ -35,7 +35,15 @@ namespace UI.API.Controllers
         }
 
         // GET: api/<PatientsController>
-        //temp disable for testing.
+        /// <summary>
+        /// Returns a filtered list of patients in the database
+        /// </summary>
+        /// <param name="filter">An object containing filtering information</param>
+        /// <returns>A filtered list of patients</returns>
+        /// <response code = "200">returns the filtered list of patients</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [Authorize(Roles = "Administrator, Doctor")]
         [HttpGet]
         public ActionResult<FilteredList<Patient>> GetAll([FromQuery] Filter filter)
@@ -71,6 +79,16 @@ namespace UI.API.Controllers
         }
 
         // GET api/<PatientsController>/5
+        /// <summary>
+        /// Returns a patient with a specified cpr
+        /// </summary>
+        /// <returns>patient</returns>
+        /// <param name="CPR"> string</param>
+        /// <response code = "200">Returns a patient</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
+        [Authorize]
         [HttpGet("{id}")]
         public ActionResult<Patient> GetById(string id)
         {
@@ -112,6 +130,15 @@ namespace UI.API.Controllers
         }
 
         // POST api/<PatientsController>
+        /// <summary>
+        /// adds a patient to the database
+        /// </summary>
+        /// <returns>patient</returns>
+        /// <param name="patientDTO">Patient</param>
+        /// <response code = "200">Patient has been added</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         public ActionResult<Patient>Add([FromBody] PatientDTO patientDTO)
@@ -165,6 +192,15 @@ namespace UI.API.Controllers
         }
 
         // PUT api/<PatientsController>/5
+        /// <summary>
+        /// This method is used to update a patient with new properties.
+        /// </summary>
+        /// <param name="patientDTO"></param>
+        /// <returns> An updated patient</returns>
+        /// <response code = "200">Patient has been updated</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [Authorize(Roles = "Administrator")]
         [HttpPut]
         public ActionResult<Patient> Edit( [FromBody] PatientDTO patientDTO)
@@ -229,6 +265,15 @@ namespace UI.API.Controllers
         }
 
         // DELETE api/<PatientsController>/5
+        /// <summary>
+        /// This method is used to remove a patient from the database
+        /// </summary>
+        /// <param name="id">string</param>
+        /// <returns> the removed patient</returns>
+        /// <response code = "200">The patient has been successfully removed</response>
+        /// <response code = "500">an error has occurred in the database</response>
+        /// <response code = "404">could not find entity</response>
+        /// <response code = "400">bad request</response>
         [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         public ActionResult<Patient> Remove(string id)

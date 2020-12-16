@@ -42,6 +42,7 @@ namespace UI.API.Controllers
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -90,6 +91,7 @@ namespace UI.API.Controllers
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
         /// <response code = "400">bad request</response>
+        [Authorize]
         [HttpGet("{email}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -131,7 +133,7 @@ namespace UI.API.Controllers
         /// adds a doctor to the database
         /// </summary>
         /// <returns>doctor</returns>
-        /// <param name="doctor">Doctor</param>
+        /// <param name="doctorDTO">Doctor</param>
         /// <response code = "200">Doctor has been added</response>
         /// <response code = "500">an error has occurred in the database</response>
         /// <response code = "404">could not find entity</response>
@@ -193,7 +195,7 @@ namespace UI.API.Controllers
         /// <summary>
         /// This method is used to update a doctor with new properties.
         /// </summary>
-        /// <param name="doctor"></param>
+        /// <param name="doctorDTO"></param>
         /// <returns> An updated doctor</returns>
         /// <response code = "200">Doctor has been updated</response>
         /// <response code = "500">an error has occurred in the database</response>
