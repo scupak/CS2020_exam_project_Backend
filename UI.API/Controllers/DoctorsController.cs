@@ -218,6 +218,7 @@ namespace UI.API.Controllers
                     FirstName = doctorDTO.FirstName,
                     LastName = doctorDTO.LastName,
                     PhoneNumber = doctorDTO.PhoneNumber,
+                    IsAdmin = doctorDTO.IsAdmin,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                 };
