@@ -56,7 +56,7 @@ namespace Infrastructure.Data
 
                      DateTime begin = DateTime.Today;
 
-                     DateTime end = DateTime.Today.AddMonths(1);
+                     DateTime end = DateTime.Today.AddMonths(2);
 
                      //loop through the days. 
                      for (DateTime date = begin; date <= end; date = date.AddDays(1))
