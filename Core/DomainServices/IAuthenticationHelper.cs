@@ -1,9 +1,6 @@
 ﻿using Core.Entities.Entities.BE;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Infrastructure.Data
+namespace Core.Services.DomainServices
 {
     public interface IAuthenticationHelper
     {
