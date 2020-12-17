@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Core.Services.ApplicationServices.Interfaces;
+using Core.Services.DomainServices;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
@@ -15,10 +17,10 @@ namespace UI.API.Controllers
     public class AppointmentGeneratorController : Controller
     {
         //public bool Runnning { get; set; }
-        private readonly AppointmentGenerator _appointmentGenerator;
+        private readonly IAppointmentGenerator _appointmentGenerator;
 
 
-        public AppointmentGeneratorController(AppointmentGenerator appointmentGenerator)
+        public AppointmentGeneratorController(IAppointmentGenerator  appointmentGenerator)
         {
             //Runnning = true;
             _appointmentGenerator = appointmentGenerator;
@@ -34,7 +36,7 @@ namespace UI.API.Controllers
         [HttpGet]
         public IActionResult stop()
         {
-            if (_appointmentGenerator.Runnning)
+            if (_appointmentGenerator.Running)
             {
                 //Runnning = false;
             
@@ -58,7 +60,7 @@ namespace UI.API.Controllers
         [HttpGet]
         public IActionResult start()
         {
-            if (!_appointmentGenerator.Runnning)
+            if (!_appointmentGenerator.Running)
             {
                 //Runnning = true;
 

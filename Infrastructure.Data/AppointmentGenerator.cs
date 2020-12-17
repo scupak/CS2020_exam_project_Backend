@@ -5,16 +5,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.Entities.Entities.BE;
+using Core.Services.ApplicationServices.Interfaces;
+using Core.Services.DomainServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Infrastructure.Data
 {
-  public class AppointmentGenerator : IHostedService , IDisposable
+  public class AppointmentGenerator : IAppointmentGenerator
   {
       private readonly IServiceScopeFactory scopeFactory;
         private Timer _timer;
-        public bool Runnning { get; set; }
+        public bool Running { get; set; }
 
         public AppointmentGenerator(IServiceScopeFactory scopeFactory)
       {
@@ -23,7 +25,7 @@ namespace Infrastructure.Data
 
       public Task StartAsync(CancellationToken cancellationToken)
       {
-          Runnning = true;
+          Running = true;
             // timer repeates call to AddAppointments every 24 hours.
             _timer = new Timer(
                 AddAppointments, 
@@ -37,7 +39,7 @@ namespace Infrastructure.Data
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Runnning = false;
+            Running = false;
             _timer?.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;
