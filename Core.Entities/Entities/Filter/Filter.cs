@@ -14,12 +14,12 @@ namespace Core.Entities.Entities.Filter
         public string OrderDirection { get; set; }
 
         /// <summary>
-        /// Describes the order in witch the objects are listed
+        /// Describes the order in which the objects are listed
         /// </summary>
         public string OrderProperty { get; set; }
 
         /// <summary>
-        /// describes the value of the field on witch the search should be performed
+        /// describes the value of the field on which the search should be performed
         /// </summary>
         public string SearchText { get; set; }
 
